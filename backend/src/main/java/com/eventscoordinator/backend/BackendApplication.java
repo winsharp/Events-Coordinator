@@ -1,4 +1,4 @@
-package com.eventcoordinator.backend;
+package com.eventscoordinator.backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
