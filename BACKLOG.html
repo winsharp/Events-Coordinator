@@ -1,0 +1,565 @@
+<title>Event Coordinator Backlog</title>
+<style>
+  :root {
+    --bg: #f7f5fb;
+    --surface: #ffffff;
+    --surface-2: #f0edf7;
+    --ink: #241f33;
+    --ink-muted: #6b6480;
+    --ink-faint: #948dab;
+    --border: #ddd8ea;
+    --border-strong: #c6bfdb;
+    --accent: #b9791f;
+    --accent-ink: #241f33;
+    --accent-soft: #f3e3c8;
+    --stretch: #6b5b95;
+    --stretch-soft: #ece7f5;
+    --shadow: 0 1px 2px rgba(36, 31, 51, 0.06), 0 8px 24px -12px rgba(36, 31, 51, 0.18);
+    --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+    --font-body: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a1730;
+      --surface: #221d3a;
+      --surface-2: #2a2447;
+      --ink: #ece8f7;
+      --ink-muted: #a89fc4;
+      --ink-faint: #766e94;
+      --border: #3a3459;
+      --border-strong: #4c4570;
+      --accent: #e8a23d;
+      --accent-ink: #1a1730;
+      --accent-soft: #3d331c;
+      --stretch: #b7a6e8;
+      --stretch-soft: #2c2650;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a1730;
+    --surface: #221d3a;
+    --surface-2: #2a2447;
+    --ink: #ece8f7;
+    --ink-muted: #a89fc4;
+    --ink-faint: #766e94;
+    --border: #3a3459;
+    --border-strong: #4c4570;
+    --accent: #e8a23d;
+    --accent-ink: #1a1730;
+    --accent-soft: #3d331c;
+    --stretch: #b7a6e8;
+    --stretch-soft: #2c2650;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 12px 32px -14px rgba(0, 0, 0, 0.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    line-height: 1.55;
+  }
+
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ---------- Masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .masthead h1 {
+    font-size: 40px;
+    letter-spacing: -0.01em;
+  }
+
+  .masthead p.lede {
+    font-size: 16px;
+    color: var(--ink-muted);
+    max-width: 60ch;
+  }
+
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+  }
+
+  .progress-label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Decisions callout ---------- */
+
+  .decisions {
+    margin-top: 28px;
+    border: 1px solid var(--border-strong);
+    border-left: 3px solid var(--stretch);
+    background: var(--stretch-soft);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+
+  .decisions h2 {
+    font-size: 15px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--stretch);
+    margin-bottom: 10px;
+  }
+
+  .decisions ol {
+    margin: 0;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .decisions li {
+    font-size: 15px;
+  }
+
+  .decisions .who {
+    color: var(--ink-muted);
+    font-size: 13px;
+  }
+
+  /* ---------- TOC ---------- */
+
+  .toc {
+    margin-top: 28px;
+  }
+
+  .toc-title {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+
+  .toc-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-list a {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--border);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  .toc-list a:hover { color: var(--accent); }
+  .toc-list a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .toc-num {
+    font-family: var(--font-mono);
+    color: var(--ink-faint);
+    font-size: 12px;
+  }
+
+  /* ---------- Epics ---------- */
+
+  .epic {
+    margin-top: 44px;
+    padding-top: 32px;
+    border-top: 1px dashed var(--border-strong);
+    scroll-margin-top: 24px;
+  }
+
+  .epic:first-of-type { border-top: none; }
+
+  .epic-head {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+
+  .epic-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+
+  .epic h2 {
+    font-size: 22px;
+  }
+
+  .epic-desc {
+    color: var(--ink-muted);
+    font-size: 14px;
+    max-width: 62ch;
+    margin-bottom: 20px;
+  }
+
+  .stories {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .story {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    padding: 14px 12px;
+    border-radius: 8px;
+  }
+
+  .story:hover { background: var(--surface); }
+
+  .story input[type="checkbox"] {
+    margin-top: 3px;
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .story-text {
+    font-size: 15.5px;
+  }
+
+  .story.done .story-text { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--border-strong); }
+  .story.done .note { color: var(--ink-faint); }
+
+  .tags {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    color: var(--ink-muted);
+    white-space: nowrap;
+  }
+
+  .tag.role { background: var(--surface-2); }
+  .tag.stretch { background: var(--stretch-soft); color: var(--stretch); border-color: transparent; }
+  .tag.us { background: transparent; color: var(--accent); border-color: var(--accent-soft); }
+
+  .note {
+    display: block;
+    margin-top: 6px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    max-width: 64ch;
+  }
+
+  .note::before {
+    content: "note — ";
+    font-family: var(--font-mono);
+    color: var(--ink-faint);
+  }
+
+  /* ---------- Footer ---------- */
+
+  .foot {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .foot code {
+    font-family: var(--font-mono);
+    background: var(--surface-2);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  @media (max-width: 560px) {
+    .wrap { padding: 36px 16px 72px; }
+    .masthead h1 { font-size: 30px; }
+    .toc-list { grid-template-columns: 1fr; }
+    .story { grid-template-columns: 20px 1fr; padding: 12px 8px; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<div class="wrap">
+
+  <header class="masthead">
+    <span class="eyebrow">Team 2 · Event Coordinator</span>
+    <h1>Project Backlog</h1>
+    <p class="lede">
+      Unpointed stories for the "middleman" event-booking app — artists claim open venue
+      dates, venues list who's confirmed, fans search for either. Bring this to pointing
+      poker; check things off as they land in <code style="font-family:var(--font-mono);font-size:0.9em;">main</code>.
+    </p>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <span class="progress-label" id="progress-label">0 / 0 checked off</span>
+    </div>
+  </header>
+
+  <section class="decisions">
+    <h2>Team decisions — settle these before epics 4, 5 &amp; 7</h2>
+    <ol>
+      <li>
+        Do <strong>venues</strong> get their own login/account, or stay as static, seeded
+        data with no auth of their own?
+        <div class="who">Blocks: Venue Data (§4), affects who can create/edit venue availability.</div>
+      </li>
+      <li>
+        Do <strong>fans</strong> get an ownable resource (e.g. favoriting an artist or venue)
+        in the MVP, or is that stretch-only?
+        <div class="who">Blocks: Fan Engagement (§7), and whether Fans satisfy US-07/09/10 at all.</div>
+      </li>
+    </ol>
+  </section>
+
+  <nav class="toc">
+    <div class="toc-title">Sections</div>
+    <ul class="toc-list">
+      <li><a href="#foundations"><span>1 · Foundations</span> <span class="toc-num">4</span></a></li>
+      <li><a href="#auth"><span>2 · Authentication</span> <span class="toc-num">5</span></a></li>
+      <li><a href="#artist"><span>3 · Artist profile</span> <span class="toc-num">3</span></a></li>
+      <li><a href="#venue"><span>4 · Venue data</span> <span class="toc-num">3</span></a></li>
+      <li><a href="#booking"><span>5 · Event booking</span> <span class="toc-num">5</span></a></li>
+      <li><a href="#search"><span>6 · Search &amp; discovery</span> <span class="toc-num">3</span></a></li>
+      <li><a href="#engagement"><span>7 · Fan engagement</span> <span class="toc-num">2</span></a></li>
+      <li><a href="#ux"><span>8 · UX &amp; validation</span> <span class="toc-num">4</span></a></li>
+      <li><a href="#testing"><span>9 · Testing</span> <span class="toc-num">3</span></a></li>
+      <li><a href="#docs"><span>10 · Docs &amp; submission</span> <span class="toc-num">3</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- 1. FOUNDATIONS -->
+  <section class="epic" id="foundations">
+    <div class="epic-head"><span class="epic-num">01</span><h2>Foundations</h2></div>
+    <p class="epic-desc">Groundwork the rest of the backlog assumes. Mostly one-time setup, ideally done together as a team so everyone starts from the same schema.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="f-1"><span class="story-text">Finalize the entity-relationship diagram as a team (User, Artist, Venue, Event — plus Favorite if Decision&nbsp;2 says yes).<span class="tags"><span class="tag role">Both</span></span><span class="note">this doc assumes a single <code style="font-family:inherit">Event</code> table with a nullable <code style="font-family:inherit">artist</code> column — null means "open slot," filled means "confirmed booking." Confirm the team's on board with that shape before building on it.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="f-2"><span class="story-text">Set up the shared JPA entities and PostgreSQL schema for User, Artist, Venue, and Event.<span class="tags"><span class="tag role">Backend</span></span><span class="note"><code style="font-family:inherit">ddl-auto: update</code> is already configured for dev — fine for now. Swap to a real migration tool (Flyway) once the schema stops changing weekly.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="f-3"><span class="story-text">Write a seed-data runner that inserts a handful of venues (and some open dates) so there's something to browse against on day one.<span class="tags"><span class="tag role">Backend</span></span><span class="note">a <code style="font-family:inherit">CommandLineRunner</code> bean gated behind a <code style="font-family:inherit">dev</code> Spring profile is the simplest way to do this — it won't run in prod/test by accident.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="f-4"><span class="story-text">Agree on a shared API reference (a Postman collection or a plain markdown table is fine) so frontend devs aren't guessing endpoint shapes while backend is still being built.<span class="tags"><span class="tag role">Both</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 2. AUTH -->
+  <section class="epic" id="auth">
+    <div class="epic-head"><span class="epic-num">02</span><h2>Authentication &amp; accounts</h2></div>
+    <p class="epic-desc">Every other epic depends on knowing who's logged in and what role they hold. Get this solid before layering features on top.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="a-1"><span class="story-text">As a new user, I want to register with a username, email, password, and a role (Fan or Artist), so the app knows what I'm allowed to do.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-01, US-03</span></span><span class="note">hash passwords with BCrypt — <code style="font-family:inherit">SecurityConfig</code> already has a <code style="font-family:inherit">PasswordEncoder</code> bean wired up. Never log or return the plaintext password, even in error messages.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="a-2"><span class="story-text">As a returning user, I want to log in and stay authenticated across requests.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-02</span></span><span class="note">pick <em>one</em> approach as a team before anyone starts: a session cookie (<code style="font-family:inherit">HttpSession</code>) is the gentler beginner path; a JWT is more portfolio-friendly but adds moving parts (issuing, storing, refreshing). Don't let two people build two different auth schemes.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="a-3"><span class="story-text">As a user, I want to log out so my session ends and the browser can't act as me anymore.<span class="tags"><span class="tag role">Both</span><span class="tag us">US-04</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="a-4"><span class="story-text">As the API, I want to reject unauthenticated requests with 401 and reject wrong-role or wrong-owner requests with 403, so the backend enforces the rules the UI only hints at.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-06</span></span><span class="note">this is where <code style="font-family:inherit">SecurityConfig</code>'s current "permit everything" placeholder gets replaced with real rules, once there's something worth protecting.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="a-5"><span class="story-text">As a user, I want inline validation on the register/login forms (required fields, valid email, password rules) so I know what's wrong before I submit.<span class="tags"><span class="tag role">Frontend</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 3. ARTIST -->
+  <section class="epic" id="artist">
+    <div class="epic-head"><span class="epic-num">03</span><h2>Artist profile</h2></div>
+    <p class="epic-desc">The artist's public identity — what a fan sees, and the first "this record belongs to me" ownership check in the app.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="ar-1"><span class="story-text">As an artist, I want to create/complete my profile (stage name, genre, bio) after registering, so fans and venues know who I am.<span class="tags"><span class="tag role">Both</span><span class="tag us">US-05, US-07</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="ar-2"><span class="story-text">As an artist, I want to view and edit my own profile — and only mine.<span class="tags"><span class="tag role">Both</span><span class="tag us">US-06, US-09</span></span><span class="note">your first real ownership check: compare the logged-in user's id against the profile's owning user id <em>in the service layer</em>. Don't trust a hidden form field to tell you whose profile this is.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="ar-3"><span class="story-text">As any visitor, I want to view an artist's public profile — name, bio, and their upcoming confirmed events.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-08</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 4. VENUE -->
+  <section class="epic" id="venue">
+    <div class="epic-head"><span class="epic-num">04</span><h2>Venue data <span style="font-family:var(--font-mono);font-size:12px;color:var(--stretch);font-weight:400;">— pending Decision 1</span></h2></div>
+    <p class="epic-desc">Where the "open dates" artists book actually come from.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="v-1"><span class="story-text">As [an admin, or a venue with an account — depends on Decision 1], I want to create a venue with its available dates, so artists have something to book.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-07</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="v-2"><span class="story-text">As any visitor, I want to view a venue's page: name, city, capacity, and its open + confirmed dates.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-08</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="v-3"><span class="story-text">If venues get accounts: as a venue, I want to manage my own available dates — but only ones nobody's booked yet.<span class="tags"><span class="tag role">Both</span><span class="tag stretch">If Decision 1</span><span class="tag us">US-09, US-10</span></span><span class="note">don't allow editing/deleting a date once an artist has claimed it — that's a normal validation error to show the user, not a 500.</span></span></label>
+    </div>
+  </section>
+
+  <!-- 5. BOOKING -->
+  <section class="epic" id="booking">
+    <div class="epic-head"><span class="epic-num">05</span><h2>Event booking — the core loop</h2></div>
+    <p class="epic-desc">The actual product: an artist claims a venue's open date, and it shows up on both sides. This is the epic worth the most care.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="b-1"><span class="story-text">As an artist, I want to see a venue's open dates, so I know when I could play there.<span class="tags"><span class="tag role">Both</span><span class="tag us">US-08</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="b-2"><span class="story-text">As an artist, I want to claim an open date for myself, turning it into a confirmed event on both the venue's page and my own "upcoming events" list.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-07</span></span><span class="note">two artists could click "book" on the same date within moments of each other. A unique constraint on <code style="font-family:inherit">(venue_id, event_date)</code> makes the second request fail cleanly at the database instead of silently double-booking — catch that constraint violation and return a friendly "that date was just taken" message, not a 500.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="b-3"><span class="story-text">As an artist, I want to cancel my own confirmed event, freeing the date back up — without being able to touch anyone else's booking.<span class="tags"><span class="tag role">Backend</span><span class="tag us">US-10</span></span><span class="note">same ownership-check pattern as the artist-profile story in §3 — reuse it rather than reinventing it.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="b-4"><span class="story-text">As an artist, I want my dashboard to list every venue + date I've confirmed.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-08</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="b-5"><span class="story-text">As a venue page visitor, I want to clearly see which dates are open vs. confirmed, and who's playing on the confirmed ones.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-08</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 6. SEARCH -->
+  <section class="epic" id="search">
+    <div class="epic-head"><span class="epic-num">06</span><h2>Search &amp; discovery</h2></div>
+    <p class="epic-desc">The fan-facing payoff — the reason any of the above matters.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="s-1"><span class="story-text">As a fan, I want to search for an artist by name and see their confirmed events as "[Artist] @ [Venue] on [Date]."<span class="tags"><span class="tag role">Both</span><span class="tag us">US-08</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="s-2"><span class="story-text">As a fan, I want a clear "no results" or "nothing upcoming yet" state instead of a blank page when a search or an artist has nothing to show.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-12</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="s-3"><span class="story-text">Stretch: as a fan, I want to search for a venue and see its confirmed upcoming events regardless of artist, so I can "see what's happening" somewhere I like.<span class="tags"><span class="tag role">Both</span><span class="tag stretch">Stretch</span><span class="tag us">US-08</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 7. ENGAGEMENT -->
+  <section class="epic" id="engagement">
+    <div class="epic-head"><span class="epic-num">07</span><h2>Fan engagement <span style="font-family:var(--font-mono);font-size:12px;color:var(--stretch);font-weight:400;">— pending Decision 2</span></h2></div>
+    <p class="epic-desc">Optional, but it's what gives Fans something to actually <em>own</em> in the app, not just browse.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="e-1"><span class="story-text">Stretch: as a fan, I want to favorite an artist or venue so I can find them again quickly.<span class="tags"><span class="tag role">Both</span><span class="tag stretch">If Decision 2</span><span class="tag us">US-07, US-09, US-10</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="e-2"><span class="story-text">Stretch: as a fan, I want a personal list of everything I've favorited.<span class="tags"><span class="tag role">Frontend</span><span class="tag stretch">Stretch</span><span class="tag us">US-08</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 8. UX -->
+  <section class="epic" id="ux">
+    <div class="epic-head"><span class="epic-num">08</span><h2>UX &amp; validation</h2></div>
+    <p class="epic-desc">Cross-cutting — touches every page above rather than being its own feature.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="u-1"><span class="story-text">As a user, I want consistent navigation across every page, with links that make sense for my role.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-11</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="u-2"><span class="story-text">As a user, I want a loading indicator while a request is in flight, instead of a frozen or blank screen.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-13</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="u-3"><span class="story-text">As a user, I want specific, readable error messages when something fails, instead of a silent failure or a raw stack trace.<span class="tags"><span class="tag role">Both</span><span class="tag us">US-12</span></span><span class="note">backend validation errors (e.g. <code style="font-family:inherit">@Valid</code> on a request DTO) should return a structured message body the frontend can actually display — not just a bare 400.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="u-4"><span class="story-text">As a user on a phone or a narrow window, I want the layout to hold up — nav collapses, nothing overflows.<span class="tags"><span class="tag role">Frontend</span><span class="tag us">US-11</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 9. TESTING -->
+  <section class="epic" id="testing">
+    <div class="epic-head"><span class="epic-num">09</span><h2>Testing</h2></div>
+    <p class="epic-desc">Prioritize the logic that's actually custom to this app — not boilerplate getters/setters.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="t-1"><span class="story-text">Unit tests around the booking logic: claiming a date, canceling a date, ownership checks, and the double-booking race case.<span class="tags"><span class="tag role">Backend</span></span><span class="note">this is the riskiest, most bespoke logic in the whole app — it deserves the most test coverage, by far.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="t-2"><span class="story-text">Tests for the auth flow: registering, logging in, and rejecting bad credentials or unauthenticated/wrong-owner requests.<span class="tags"><span class="tag role">Backend</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="t-3"><span class="story-text">At least a few frontend tests around the search flow and the booking flow — the features a grader will actually click through.<span class="tags"><span class="tag role">Frontend</span></span></span></label>
+    </div>
+  </section>
+
+  <!-- 10. DOCS -->
+  <section class="epic" id="docs">
+    <div class="epic-head"><span class="epic-num">10</span><h2>Docs &amp; submission</h2></div>
+    <p class="epic-desc">Due last, but don't leave it until the actual last day.</p>
+    <div class="stories">
+      <label class="story"><input type="checkbox" data-id="d-1"><span class="story-text">Write the top-level README: overview, architecture, tech stack, and how to run both apps locally.<span class="tags"><span class="tag role">Both</span></span><span class="note">the repo's <code style="font-family:inherit">docker-compose.yml</code> and each app's <code style="font-family:inherit">.env.example</code> already cover the "how do I run this" half — write the rest around them.</span></span></label>
+      <label class="story"><input type="checkbox" data-id="d-2"><span class="story-text">Document the API endpoints — a markdown table or a proper OpenAPI/Swagger doc — so grading and frontend integration aren't guesswork.<span class="tags"><span class="tag role">Backend</span></span></span></label>
+      <label class="story"><input type="checkbox" data-id="d-3"><span class="story-text">Write up each team member's contributions/responsibilities, as the project instructions require.<span class="tags"><span class="tag role">Both</span></span></span></label>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>Checkbox state saves privately to your own browser via <code>localStorage</code> — it isn't shared with the team.</span>
+    <span>Point these together before sprinting.</span>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var KEY = 'ec-backlog-checked-v1';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+
+  var boxes = document.querySelectorAll('.story input[type="checkbox"]');
+  var fill = document.getElementById('progress-fill');
+  var label = document.getElementById('progress-label');
+
+  function updateProgress() {
+    var total = boxes.length;
+    var done = 0;
+    boxes.forEach(function (cb) { if (cb.checked) done++; });
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = done + ' / ' + total + ' checked off';
+  }
+
+  boxes.forEach(function (cb) {
+    var id = cb.dataset.id;
+    if (state[id]) {
+      cb.checked = true;
+      cb.closest('.story').classList.add('done');
+    }
+    cb.addEventListener('change', function () {
+      state[id] = cb.checked;
+      cb.closest('.story').classList.toggle('done', cb.checked);
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+      updateProgress();
+    });
+  });
+
+  updateProgress();
+})();
+</script>
