@@ -1,2 +1,2 @@
-# Proj-3-TBD
-TBD
+# Events Coordinator
+Middleman that coordinates artists, venues, and patrons
