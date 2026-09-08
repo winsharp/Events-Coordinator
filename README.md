@@ -1,2 +1,2 @@
 # Events Coordinator
-Middleman that coordinates artists, venues, and patrons
+Middleman that coordinates artists, venues, and patrons. 
