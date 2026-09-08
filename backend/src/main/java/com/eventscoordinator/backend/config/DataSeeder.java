@@ -4,10 +4,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.eventscoordinator.backend.model.Account;
 import com.eventscoordinator.backend.model.Role;
-import com.eventscoordinator.backend.model.User;
 import com.eventscoordinator.backend.model.Venue;
-import com.eventscoordinator.backend.repository.UserRepository;
+import com.eventscoordinator.backend.repository.AccountRepository;
 import com.eventscoordinator.backend.repository.VenueRepository;
 
 // runs on every startup, but only inserts if the venue table is empty —
@@ -15,12 +15,12 @@ import com.eventscoordinator.backend.repository.VenueRepository;
 @Component
 public class DataSeeder implements CommandLineRunner {
 
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final VenueRepository venueRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public DataSeeder(UserRepository userRepository, VenueRepository venueRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    public DataSeeder(AccountRepository accountRepository, VenueRepository venueRepository, PasswordEncoder passwordEncoder) {
+        this.accountRepository = accountRepository;
         this.venueRepository = venueRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -37,8 +37,8 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     private void seedVenue(String username, String email, String name, String city, int capacity) {
-        User user = new User(username, email, passwordEncoder.encode("password123"), Role.VENUE);
-        userRepository.save(user);
-        venueRepository.save(new Venue(user, name, city, capacity));
+        Account account = new Account(username, email, passwordEncoder.encode("password123"), Role.VENUE);
+        accountRepository.save(account);
+        venueRepository.save(new Venue(account, name, city, capacity));
     }
 }

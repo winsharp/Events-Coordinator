@@ -21,8 +21,8 @@ import org.springframework.web.server.ResponseStatusException;
 import com.eventscoordinator.backend.dto.AuthResponse;
 import com.eventscoordinator.backend.dto.LoginRequest;
 import com.eventscoordinator.backend.dto.RegisterRequest;
-import com.eventscoordinator.backend.model.User;
-import com.eventscoordinator.backend.security.AppUserPrincipal;
+import com.eventscoordinator.backend.model.Account;
+import com.eventscoordinator.backend.security.AppAccountPrincipal;
 import com.eventscoordinator.backend.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,8 +43,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        User user = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(user));
+        Account account = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(account));
     }
 
     @PostMapping("/login")
@@ -63,7 +63,7 @@ public class AuthController {
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, httpRequest, httpResponse);
 
-        return toResponse(((AppUserPrincipal) authentication.getPrincipal()).getUser());
+        return toResponse(((AppAccountPrincipal) authentication.getPrincipal()).getAccount());
     }
 
     @PostMapping("/logout")
@@ -74,11 +74,11 @@ public class AuthController {
 
     // SecurityConfig requires auth on this route, so principal is never null here
     @GetMapping("/me")
-    public AuthResponse me(@AuthenticationPrincipal AppUserPrincipal principal) {
-        return toResponse(principal.getUser());
+    public AuthResponse me(@AuthenticationPrincipal AppAccountPrincipal principal) {
+        return toResponse(principal.getAccount());
     }
 
-    private AuthResponse toResponse(User user) {
-        return new AuthResponse(user.getId(), user.getUsername(), user.getRole());
+    private AuthResponse toResponse(Account account) {
+        return new AuthResponse(account.getId(), account.getUsername(), account.getRole(), account.getEmail(), account.getFirstName(), account.getLastName());
     }
 }

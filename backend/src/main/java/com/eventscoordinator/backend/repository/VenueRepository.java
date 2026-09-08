@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.eventscoordinator.backend.model.Venue;
 
 public interface VenueRepository extends JpaRepository<Venue, Long> {
-    Optional<Venue> findByUserId(Long userId);
+    Optional<Venue> findByAccountId(Long accountId);
 }

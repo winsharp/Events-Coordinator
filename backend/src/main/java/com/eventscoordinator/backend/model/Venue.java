@@ -18,8 +18,8 @@ public class Venue {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    @JoinColumn(name = "account_id", nullable = false, unique = true)
+    private Account account;
 
     @Column(nullable = false)
     private String name;
@@ -31,8 +31,8 @@ public class Venue {
     public Venue() {
     }
 
-    public Venue(User user, String name, String city, Integer capacity) {
-        this.user = user;
+    public Venue(Account account, String name, String city, Integer capacity) {
+        this.account = account;
         this.name = name;
         this.city = city;
         this.capacity = capacity;
@@ -46,12 +46,12 @@ public class Venue {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getName() {

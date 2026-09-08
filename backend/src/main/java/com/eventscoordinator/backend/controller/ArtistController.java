@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eventscoordinator.backend.dto.ArtistProfileRequest;
 import com.eventscoordinator.backend.dto.ArtistResponse;
-import com.eventscoordinator.backend.security.AppUserPrincipal;
+import com.eventscoordinator.backend.security.AppAccountPrincipal;
 import com.eventscoordinator.backend.service.ArtistService;
 
 @RestController
@@ -27,8 +27,8 @@ public class ArtistController {
     }
 
     @PostMapping
-    public ResponseEntity<ArtistResponse> createProfile(@AuthenticationPrincipal AppUserPrincipal principal, @RequestBody ArtistProfileRequest request) {
-        ArtistResponse response = artistService.createProfile(principal.getUser(), request);
+    public ResponseEntity<ArtistResponse> createProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody ArtistProfileRequest request) {
+        ArtistResponse response = artistService.createProfile(principal.getAccount(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -38,12 +38,12 @@ public class ArtistController {
     }
 
     @GetMapping("/me")
-    public ArtistResponse getOwnProfile(@AuthenticationPrincipal AppUserPrincipal principal) {
-        return artistService.getOwnProfile(principal.getUser());
+    public ArtistResponse getOwnProfile(@AuthenticationPrincipal AppAccountPrincipal principal) {
+        return artistService.getOwnProfile(principal.getAccount());
     }
 
     @PutMapping("/me")
-    public ArtistResponse updateOwnProfile(@AuthenticationPrincipal AppUserPrincipal principal, @RequestBody ArtistProfileRequest request) {
-        return artistService.updateOwnProfile(principal.getUser(), request);
+    public ArtistResponse updateOwnProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody ArtistProfileRequest request) {
+        return artistService.updateOwnProfile(principal.getAccount(), request);
     }
 }

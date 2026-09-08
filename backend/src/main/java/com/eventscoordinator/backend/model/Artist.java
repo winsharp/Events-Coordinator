@@ -18,8 +18,8 @@ public class Artist {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+    @JoinColumn(name = "account_id", nullable = false, unique = true)
+    private Account account;
 
     @Column(name = "stage_name", nullable = false)
     private String stageName;
@@ -32,8 +32,8 @@ public class Artist {
     public Artist() {
     }
 
-    public Artist(User user, String stageName, String genre, String bio) {
-        this.user = user;
+    public Artist(Account account, String stageName, String genre, String bio) {
+        this.account = account;
         this.stageName = stageName;
         this.genre = genre;
         this.bio = bio;
@@ -47,12 +47,12 @@ public class Artist {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public String getStageName() {

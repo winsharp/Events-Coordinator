@@ -6,9 +6,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.eventscoordinator.backend.dto.ArtistProfileRequest;
 import com.eventscoordinator.backend.dto.ArtistResponse;
+import com.eventscoordinator.backend.model.Account;
 import com.eventscoordinator.backend.model.Artist;
 import com.eventscoordinator.backend.model.Role;
-import com.eventscoordinator.backend.model.User;
 import com.eventscoordinator.backend.repository.ArtistRepository;
 
 @Service
@@ -20,13 +20,13 @@ public class ArtistService {
         this.artistRepository = artistRepository;
     }
 
-    public ArtistResponse createProfile(User currentUser, ArtistProfileRequest request) {
-        requireRole(currentUser, Role.ARTIST);
-        if (artistRepository.findByUserId(currentUser.getId()).isPresent()) {
+    public ArtistResponse createProfile(Account currentAccount, ArtistProfileRequest request) {
+        requireRole(currentAccount, Role.ARTIST);
+        if (artistRepository.findByAccountId(currentAccount.getId()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Artist profile already exists");
         }
 
-        Artist artist = new Artist(currentUser, request.stageName(), request.genre(), request.bio());
+        Artist artist = new Artist(currentAccount, request.stageName(), request.genre(), request.bio());
         return toResponse(artistRepository.save(artist));
     }
 
@@ -34,12 +34,12 @@ public class ArtistService {
         return toResponse(findById(id));
     }
 
-    public ArtistResponse getOwnProfile(User currentUser) {
-        return toResponse(findByUserId(currentUser.getId()));
+    public ArtistResponse getOwnProfile(Account currentAccount) {
+        return toResponse(findByAccountId(currentAccount.getId()));
     }
 
-    public ArtistResponse updateOwnProfile(User currentUser, ArtistProfileRequest request) {
-        Artist artist = findByUserId(currentUser.getId());
+    public ArtistResponse updateOwnProfile(Account currentAccount, ArtistProfileRequest request) {
+        Artist artist = findByAccountId(currentAccount.getId());
         artist.setStageName(request.stageName());
         artist.setGenre(request.genre());
         artist.setBio(request.bio());
@@ -51,18 +51,18 @@ public class ArtistService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found"));
     }
 
-    private Artist findByUserId(Long userId) {
-        return artistRepository.findByUserId(userId)
+    private Artist findByAccountId(Long accountId) {
+        return artistRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No artist profile for this account yet"));
     }
 
-    private void requireRole(User user, Role role) {
-        if (user.getRole() != role) {
+    private void requireRole(Account account, Role role) {
+        if (account.getRole() != role) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only " + role + " accounts can do this");
         }
     }
 
     private ArtistResponse toResponse(Artist artist) {
-        return new ArtistResponse(artist.getId(), artist.getUser().getUsername(), artist.getStageName(), artist.getGenre(), artist.getBio());
+        return new ArtistResponse(artist.getId(), artist.getAccount().getUsername(), artist.getStageName(), artist.getGenre(), artist.getBio());
     }
 }

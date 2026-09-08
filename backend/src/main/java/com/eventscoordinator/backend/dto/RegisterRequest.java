@@ -1,4 +1,4 @@
 package com.eventscoordinator.backend.dto;
 
-public record RegisterRequest(String username, String email, String password, String role) {
+public record RegisterRequest(String username, String email, String password, String role, String firstName, String lastName) {
 }

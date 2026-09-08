@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.eventscoordinator.backend.dto.VenueProfileRequest;
 import com.eventscoordinator.backend.dto.VenueResponse;
-import com.eventscoordinator.backend.security.AppUserPrincipal;
+import com.eventscoordinator.backend.security.AppAccountPrincipal;
 import com.eventscoordinator.backend.service.VenueService;
 
 @RestController
@@ -27,8 +27,8 @@ public class VenueController {
     }
 
     @PostMapping
-    public ResponseEntity<VenueResponse> createProfile(@AuthenticationPrincipal AppUserPrincipal principal, @RequestBody VenueProfileRequest request) {
-        VenueResponse response = venueService.createProfile(principal.getUser(), request);
+    public ResponseEntity<VenueResponse> createProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody VenueProfileRequest request) {
+        VenueResponse response = venueService.createProfile(principal.getAccount(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -38,12 +38,12 @@ public class VenueController {
     }
 
     @GetMapping("/me")
-    public VenueResponse getOwnProfile(@AuthenticationPrincipal AppUserPrincipal principal) {
-        return venueService.getOwnProfile(principal.getUser());
+    public VenueResponse getOwnProfile(@AuthenticationPrincipal AppAccountPrincipal principal) {
+        return venueService.getOwnProfile(principal.getAccount());
     }
 
     @PutMapping("/me")
-    public VenueResponse updateOwnProfile(@AuthenticationPrincipal AppUserPrincipal principal, @RequestBody VenueProfileRequest request) {
-        return venueService.updateOwnProfile(principal.getUser(), request);
+    public VenueResponse updateOwnProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody VenueProfileRequest request) {
+        return venueService.updateOwnProfile(principal.getAccount(), request);
     }
 }

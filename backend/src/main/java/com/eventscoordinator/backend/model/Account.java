@@ -10,8 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "app_user")
-public class User {
+@Table(name = "account")
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,14 +30,26 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
-    public User() {
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    public Account() {
     }
 
-    public User(String username, String email, String passwordHash, Role role) {
+    public Account(String username, String email, String passwordHash, Role role) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
+    }
+
+    public Account(String username, String email, String passwordHash, Role role, String firstName, String lastName) {
+        this(username, email, passwordHash, role);
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     public Long getId() {
@@ -78,5 +90,21 @@ public class User {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

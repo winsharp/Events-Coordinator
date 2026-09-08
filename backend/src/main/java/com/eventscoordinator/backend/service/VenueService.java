@@ -6,8 +6,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.eventscoordinator.backend.dto.VenueProfileRequest;
 import com.eventscoordinator.backend.dto.VenueResponse;
+import com.eventscoordinator.backend.model.Account;
 import com.eventscoordinator.backend.model.Role;
-import com.eventscoordinator.backend.model.User;
 import com.eventscoordinator.backend.model.Venue;
 import com.eventscoordinator.backend.repository.VenueRepository;
 
@@ -20,13 +20,13 @@ public class VenueService {
         this.venueRepository = venueRepository;
     }
 
-    public VenueResponse createProfile(User currentUser, VenueProfileRequest request) {
-        requireRole(currentUser, Role.VENUE);
-        if (venueRepository.findByUserId(currentUser.getId()).isPresent()) {
+    public VenueResponse createProfile(Account currentAccount, VenueProfileRequest request) {
+        requireRole(currentAccount, Role.VENUE);
+        if (venueRepository.findByAccountId(currentAccount.getId()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Venue profile already exists");
         }
 
-        Venue venue = new Venue(currentUser, request.name(), request.city(), request.capacity());
+        Venue venue = new Venue(currentAccount, request.name(), request.city(), request.capacity());
         return toResponse(venueRepository.save(venue));
     }
 
@@ -34,12 +34,12 @@ public class VenueService {
         return toResponse(findById(id));
     }
 
-    public VenueResponse getOwnProfile(User currentUser) {
-        return toResponse(findByUserId(currentUser.getId()));
+    public VenueResponse getOwnProfile(Account currentAccount) {
+        return toResponse(findByAccountId(currentAccount.getId()));
     }
 
-    public VenueResponse updateOwnProfile(User currentUser, VenueProfileRequest request) {
-        Venue venue = findByUserId(currentUser.getId());
+    public VenueResponse updateOwnProfile(Account currentAccount, VenueProfileRequest request) {
+        Venue venue = findByAccountId(currentAccount.getId());
         venue.setName(request.name());
         venue.setCity(request.city());
         venue.setCapacity(request.capacity());
@@ -51,18 +51,18 @@ public class VenueService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
     }
 
-    private Venue findByUserId(Long userId) {
-        return venueRepository.findByUserId(userId)
+    private Venue findByAccountId(Long accountId) {
+        return venueRepository.findByAccountId(accountId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No venue profile for this account yet"));
     }
 
-    private void requireRole(User user, Role role) {
-        if (user.getRole() != role) {
+    private void requireRole(Account account, Role role) {
+        if (account.getRole() != role) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only " + role + " accounts can do this");
         }
     }
 
     private VenueResponse toResponse(Venue venue) {
-        return new VenueResponse(venue.getId(), venue.getUser().getUsername(), venue.getName(), venue.getCity(), venue.getCapacity());
+        return new VenueResponse(venue.getId(), venue.getAccount().getUsername(), venue.getName(), venue.getCity(), venue.getCapacity());
     }
 }

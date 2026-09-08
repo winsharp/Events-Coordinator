@@ -1,7 +1,7 @@
 package com.eventscoordinator.backend.model;
 
 public enum Role {
-    FAN,
+    CUSTOMER,
     ARTIST,
     VENUE
 }
