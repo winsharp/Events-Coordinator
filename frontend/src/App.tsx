@@ -2,6 +2,7 @@ import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
 import './App.css'
 import HomePage from './pages/HomePage/HomePage'
 import EventDetailPage from "./pages/EventDetailPage/EventDetailPage.tsx";
+import VenueDashboardPage from './pages/VenueDashboardPage/VenueDashboardPage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
 
@@ -26,6 +27,7 @@ function App() {
                   element={<EventDetailPage event={sampleEvent} />}
               />
           </Route>
+            <Route path="venue/dashboard" element={<VenueDashboardPage />} />
         </Routes>
       </BrowserRouter>
     </>
