@@ -1,5 +1,7 @@
 package com.eventscoordinator.backend.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +18,7 @@ import com.eventscoordinator.backend.dto.VenueResponse;
 import com.eventscoordinator.backend.security.AppAccountPrincipal;
 import com.eventscoordinator.backend.service.VenueService;
 
+
 @RestController
 @RequestMapping("/api/venues")
 public class VenueController {
@@ -30,6 +33,11 @@ public class VenueController {
     public ResponseEntity<VenueResponse> createProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody VenueProfileRequest request) {
         VenueResponse response = venueService.createProfile(principal.getAccount(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("")
+    public List<VenueResponse> getAllVenues() {
+        return venueService.getAll();
     }
 
     @GetMapping("/{id}")
