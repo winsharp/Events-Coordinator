@@ -372,3 +372,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+export { SectionHeader, EVENTS, EventCard };
