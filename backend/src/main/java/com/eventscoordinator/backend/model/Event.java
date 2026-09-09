@@ -32,6 +32,11 @@ public class Event {
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
+    private String title;
+
+    @Column(length = 2000)
+    private String description;
+
     public Event() {
     }
 
@@ -71,5 +76,21 @@ public class Event {
 
     public void setEventDate(LocalDate eventDate) {
         this.eventDate = eventDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
