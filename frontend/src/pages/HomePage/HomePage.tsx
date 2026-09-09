@@ -221,7 +221,7 @@ const SectionHeader= ({ title, linkText } : SectionHeaderProps) => {
 
 
 const EventCard: React.FC<{ event: EventItem }> = ({ event }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   return (
     <div className="card">
@@ -244,8 +244,10 @@ const EventCard: React.FC<{ event: EventItem }> = ({ event }) => {
           </div>
           <button
             className="btn-buy"
-            onClick={(event) => {
-              // navigate('/event-detail-page', { state: { event: event }})
+            onClick={() => {
+                navigate(`/events/${event.id}`, {
+                    state: { event },
+                });
             }}
           >Buy Tickets</button>
         </div>
