@@ -1,25 +1,37 @@
 import { useEffect, useState } from "react";
 import VenueCalendar from "../../components/VenueCalendar/VenueCalendar";
-import { addDate, deleteDate, getMyDates, type VenueDateResponse } from "../../api/venueApi";
+import {
+    addDate,
+    deleteDate,
+    getMyDates,
+    getMyVenueProfile,
+    type VenueDateResponse,
+    type VenueResponse,
+} from "../../api/venueApi";
 import "./VenueDashboardPage.css";
 
 export default function VenueDashboardPage() {
+    const [venue, setVenue] = useState<VenueResponse | null>(null);
     const [dates, setDates] = useState<VenueDateResponse[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        loadDates();
+        loadAll();
     }, []);
 
-    async function loadDates() {
+    async function loadAll() {
         setIsLoading(true);
         setError(null);
         try {
-            const result = await getMyDates();
-            setDates(result);
+            const [venueResult, datesResult] = await Promise.all([
+                getMyVenueProfile(),
+                getMyDates(),
+            ]);
+            setVenue(venueResult);
+            setDates(datesResult);
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to load dates");
+            setError(err instanceof Error ? err.message : "Failed to load dashboard");
         } finally {
             setIsLoading(false);
         }
@@ -47,9 +59,11 @@ export default function VenueDashboardPage() {
 
     return (
         <div className="venue-dashboard-page">
-            {/* TODO: replace with real venue name once a venue-profile endpoint (GET /api/venues/me) is confirmed */}
-            <h1>Manage Availability</h1>
+            <h1>{venue ? venue.name : "Manage Availability"}</h1>
+            {venue && <p className="venue-dashboard-subtitle">{venue.city}</p>}
+
             {error && <div className="venue-dashboard-error">{error}</div>}
+
             {isLoading ? (
                 <p>Loading your calendar…</p>
             ) : (
