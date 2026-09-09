@@ -13,6 +13,22 @@ interface TicketSelectorProps {
     totalPrice: number;
 }
 
+interface BuyTicketRequest {
+    eventId: number;
+    // ticketCategory: string;
+    // quantity: number;
+}
+
+interface TicketResponse {
+    id: number;
+    eventId: number;
+    eventTitle: string;
+    artistStageName: string;
+    venueName: string;
+    eventDate: string;
+    purchasedAt: string;
+}
+
 function TicketSelector({
                             event,
                             quantity,
@@ -27,6 +43,35 @@ function TicketSelector({
         ticketCategory === "general"
             ? "General Admission"
             : "VIP Pass";
+
+    async function handleBuyTicket() {
+        const request: BuyTicketRequest = {
+            eventId: event.id,
+            // ticketCategory,
+            // quantity,
+        };
+
+        try {
+            const response = await fetch("http://localhost:8080/api/tickets", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(request),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to buy ticket");
+            }
+
+            const ticket: TicketResponse = await response.json();
+
+            console.log(ticket);
+        } catch (error) {
+            console.error("Error buying ticket:", error);
+        }
+    }
 
     return (
         <div className="ticket-category-container">
@@ -56,6 +101,7 @@ function TicketSelector({
             <button
                 type="button"
                 className="buy-ticket-button"
+                onClick={handleBuyTicket}
             >
                 Buy Tickets
             </button>
