@@ -11,6 +11,7 @@ import AccountTypePage from "./pages/Auth/AccountTypePage";
 import LoginPage from "./pages/Auth/LoginPage";
 import RegisterPage from "./pages/Auth/RegisterPage";
 
+import CustomerProfilePage from './pages/CustomerProfilePage/CustomerProfilePage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
 
@@ -59,13 +60,20 @@ function App() {
               />
 
               <Route
+                path="/venues"
+                element={<VenueListPage />}
+              />
+
+              <Route
                 path="/venues/:venueId"
                 element={<VenueBookingPage />}
               />
+
+              <Route path="account" element={<CustomerProfilePage />} />
             </Route>
           </Routes>
         </BrowserRouter>
-      </DataProvider>
+      </DataProvider >
     </AuthProvider>
   );
 }
