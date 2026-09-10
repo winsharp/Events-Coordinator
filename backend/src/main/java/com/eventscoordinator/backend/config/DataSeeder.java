@@ -45,9 +45,9 @@ public class DataSeeder implements CommandLineRunner {
         seedVenue("brooklynbowl", "brooklynbowl@example.com", "Brooklyn Bowl", "Brooklyn, NY", 600);
 
         Artist artist = seedArtist("artist_", "artist@hotmail.com", "Rick Roy");
-        seedEvent(venue, artist, LocalDate.parse("2026-10-03"));
-        seedEvent(venue, artist, LocalDate.parse("2026-10-04"));
-        seedEvent(venue, artist, LocalDate.parse("2026-10-05"));
+        seedEvent("Rhythm & Brews Fest", "A playful, sensory outdoor festival featuring live musical performances paired with craft beverages.", venue, artist, LocalDate.parse("2026-10-03"));
+        seedEvent("Lemonade on the Lawn", "A relaxed, family-friendly spring or summer daytime social gathering.", venue, artist, LocalDate.parse("2026-10-04"));
+        seedEvent("Neon Nights Live", "A recurring outdoor evening music and arts festival showcasing local electronic artists, interactive light installations, and food vendors.", venue, artist, LocalDate.parse("2026-10-05"));
     }
 
     private Artist seedArtist(String username, String email, String name) {
@@ -63,8 +63,10 @@ public class DataSeeder implements CommandLineRunner {
         return venueRepository.save(new Venue(account, name, city, capacity));
     }
 
-    private Event seedEvent(Venue venue, Artist artist, LocalDate date) {
+    private Event seedEvent(String title, String description, Venue venue, Artist artist, LocalDate date) {
         Event event = new Event(venue, artist, date);
+        event.setTitle(title);
+        event.setDescription(description);
         return eventRepository.save(event);
     }
 }
