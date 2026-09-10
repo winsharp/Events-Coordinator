@@ -1,6 +1,7 @@
 package com.eventscoordinator.backend.config;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,10 +11,12 @@ import com.eventscoordinator.backend.model.Account;
 import com.eventscoordinator.backend.model.Artist;
 import com.eventscoordinator.backend.model.Event;
 import com.eventscoordinator.backend.model.Role;
+import com.eventscoordinator.backend.model.Ticket;
 import com.eventscoordinator.backend.model.Venue;
 import com.eventscoordinator.backend.repository.AccountRepository;
 import com.eventscoordinator.backend.repository.ArtistRepository;
 import com.eventscoordinator.backend.repository.EventRepository;
+import com.eventscoordinator.backend.repository.TicketRepository;
 import com.eventscoordinator.backend.repository.VenueRepository;
 
 // runs on every startup, but only inserts if the venue table is empty —
@@ -25,13 +28,15 @@ public class DataSeeder implements CommandLineRunner {
     private final PasswordEncoder passwordEncoder;
     private final ArtistRepository artistRepository;
     private final EventRepository eventRepository;
+    private final TicketRepository ticketRepository;
 
-    public DataSeeder(AccountRepository accountRepository, VenueRepository venueRepository, ArtistRepository artistRepository, EventRepository eventRepository, PasswordEncoder passwordEncoder) {
+    public DataSeeder(AccountRepository accountRepository, VenueRepository venueRepository, ArtistRepository artistRepository, EventRepository eventRepository, TicketRepository ticketRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.venueRepository = venueRepository;
         this.passwordEncoder = passwordEncoder;
         this.artistRepository = artistRepository;
         this.eventRepository = eventRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     @Override
@@ -45,9 +50,14 @@ public class DataSeeder implements CommandLineRunner {
         seedVenue("brooklynbowl", "brooklynbowl@example.com", "Brooklyn Bowl", "Brooklyn, NY", 600);
 
         Artist artist = seedArtist("artist_", "artist@hotmail.com", "Rick Roy");
-        seedEvent(venue, artist, LocalDate.parse("2026-10-03"));
-        seedEvent(venue, artist, LocalDate.parse("2026-10-04"));
+        Event event1 = seedEvent(venue, artist, LocalDate.parse("2026-10-03"));
+        Event event2 = seedEvent(venue, artist, LocalDate.parse("2026-10-04"));
         seedEvent(venue, artist, LocalDate.parse("2026-10-05"));
+
+        Account customer = seedCustomer("testcustomer", "testcustomer@example.com", "Test", "Customer");
+        seedTicket(event1, customer);
+        seedTicket(event1, customer);
+        seedTicket(event2, customer);
     }
 
     private Artist seedArtist(String username, String email, String name) {
@@ -66,5 +76,15 @@ public class DataSeeder implements CommandLineRunner {
     private Event seedEvent(Venue venue, Artist artist, LocalDate date) {
         Event event = new Event(venue, artist, date);
         return eventRepository.save(event);
+    }
+
+    private Account seedCustomer(String username, String email, String firstName, String lastName) {
+        Account account = new Account(username, email, passwordEncoder.encode("password123"), Role.CUSTOMER, firstName, lastName);
+        return accountRepository.save(account);
+    }
+
+    private Ticket seedTicket(Event event, Account account) {
+        Ticket ticket = new Ticket(event, account, LocalDateTime.now());
+        return ticketRepository.save(ticket);
     }
 }
