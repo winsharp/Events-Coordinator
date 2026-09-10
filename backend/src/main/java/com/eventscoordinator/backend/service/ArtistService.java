@@ -1,5 +1,7 @@
 package com.eventscoordinator.backend.service;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +30,10 @@ public class ArtistService {
 
         Artist artist = new Artist(currentAccount, request.stageName(), request.genre(), request.bio());
         return toResponse(artistRepository.save(artist));
+    }
+
+    public List<ArtistResponse> getAll() {
+        return artistRepository.findAll().stream().map((artist) -> toResponse(artist)).toList();
     }
 
     public ArtistResponse getById(Long id) {
