@@ -19,6 +19,12 @@ export interface RegisterRequest {
   role: BackendRole;
   firstName: string;
   lastName: string;
+  stageName?: string;
+  genre?: string;
+  bio?: string;
+  venueName?: string;
+  city?: string;
+  capacity?: number;
 }
 
 async function getErrorMessage(
