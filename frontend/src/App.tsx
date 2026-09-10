@@ -1,4 +1,4 @@
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css'
 import HomePage from './pages/HomePage/HomePage'
 import EventDetailPage from "./pages/EventDetailPage/EventDetailPage.tsx";
@@ -8,14 +8,7 @@ import VenueBookingPage from './pages/VenueBookingPage/VenueBookingPage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
 import { DataProvider } from './context/DataContext.tsx';
-
-function PageLayout() {
-  return (
-    <>
-      <Outlet />
-    </>
-  );
-}
+import PageLayout from './pages/PageLayout/PageLayout.tsx';
 
 function App() {
   return (
@@ -25,14 +18,14 @@ function App() {
           <Route path='/' element={<PageLayout/>}>
             <Route element={<HomePage />} index/>
             <Route path='home' element={<HomePage />} index/>
-              <Route
-                  path="events/:eventId"
-                  element={<EventDetailPage event={sampleEvent} />}
-              />
-          </Route>
+            <Route
+              path="events/:eventId"
+              element={<EventDetailPage event={sampleEvent} />}
+            />
             <Route path="venue/dashboard" element={<VenueDashboardPage />} />
             <Route path="venues" element={<VenueListPage />} />
             <Route path="venues/:venueId" element={<VenueBookingPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </DataProvider>
