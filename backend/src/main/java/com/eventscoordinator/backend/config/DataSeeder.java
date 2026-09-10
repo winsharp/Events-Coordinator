@@ -53,6 +53,8 @@ public class DataSeeder implements CommandLineRunner {
         Event event1 = seedEvent("Rhythm & Brews Fest", "A playful, sensory outdoor festival featuring live musical performances paired with craft beverages.", venue, artist, LocalDate.parse("2026-10-03"));
         Event event2 = seedEvent("Lemonade on the Lawn", "A relaxed, family-friendly spring or summer daytime social gathering.", venue, artist, LocalDate.parse("2026-10-04"));
         seedEvent("Neon Nights Live", "A recurring outdoor evening music and arts festival showcasing local electronic artists, interactive light installations, and food vendors.", venue, artist, LocalDate.parse("2026-10-05"));
+        seedEvent("SOULFLY * NAILBOMB * INCITE", "A fall heavy metal tour featuring Soulfly led by Max Cavalera, the industrial sludge band Nailbomb, and the thrash metal band Incite.", venue, artist, LocalDate.parse("2026-10-08"));
+        seedEvent("Asleep at the Wheel", "A live country music show featuring Asleep at the Wheel, Ben Haggard, and Bob Wills' Texas Playboys.", venue, artist, LocalDate.parse("2026-10-09"));
 
         Account customer = seedCustomer("testcustomer", "testcustomer@example.com", "Test", "Customer");
         seedTicket(event1, customer);

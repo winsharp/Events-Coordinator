@@ -43,6 +43,7 @@ function App() {
             {/* Existing application */}
             <Route path="/" element={<PageLayout />}>
               <Route element={<HomePage />} index />
+              <Route path='/home' element={<HomePage />}/>
 
               <Route
                 path="events/:eventId"
