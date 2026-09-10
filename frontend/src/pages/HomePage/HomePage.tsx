@@ -78,11 +78,11 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
     >
       <img src={event.image || "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80"} alt={event.title} />
       <div className="card-body">
-        <p className="card-tag">{event.description}</p>
+        {/* <p className="card-tag">{event.description}</p> */}
         <h3 className="card-title">{event.title}</h3>
         <div className="card-meta">
           <MapPinIcon />
-          <span>{event.venue}</span>
+          <span>{event.venue.name}</span>
         </div>
         <div className="card-meta">
           <CalendarIcon />
@@ -111,9 +111,8 @@ const ArtistItem: React.FC<{ artist: Artist }> = ({ artist }) => {
   const defaultImage = "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80";
   return (
     <div className="artist-item">
-      <img src={artist.image || defaultImage} alt={artist.name} />
-      <p className="artist-name">{artist.name}</p>
-      <p className="artist-genre">{artist.bio}</p>
+      <img src={artist.image || defaultImage} alt={artist.stageName} />
+      <p className="artist-name">{artist.stageName}</p>
     </div>
   );
 };
@@ -126,7 +125,7 @@ const VenueCard: React.FC<{ venue: Venue }> = ({ venue }) => {
         <p className="venue-name">{venue.name}</p>
         <div className="card-meta">
           <MapPinIcon />
-          <span>{venue.location}</span>
+          <span>{venue.city}</span>
         </div>
         <p className="venue-capacity">Capacity: {venue.capacity}</p>
       </div>
@@ -139,7 +138,7 @@ const HomePage = () => {
 
   const eventItems: SearchItem[] = events.map( (e: Event) : SearchItem => ({id: e.id.toString(), category: "event", title: e.title || ""}));
   const venueItems: SearchItem[] = venues.map( (v: Venue) : SearchItem => ({id: v.id.toString(), category: "venue", title: v.name || ""}));
-  const artistItems: SearchItem[] = artists.map( (a: Artist) : SearchItem => ({id: a.id.toString(), category: "artist", title: a.name || ""}));
+  const artistItems: SearchItem[] = artists.map( (a: Artist) : SearchItem => ({id: a.id.toString(), category: "artist", title: a.stageName || ""}));
   const searchItems: SearchItem[] = [...eventItems, ...venueItems, ...artistItems];
 
   const navigate = useNavigate();

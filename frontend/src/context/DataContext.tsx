@@ -8,22 +8,25 @@ export type Event = {
   id: number;
   title: string;
   description: string;
-  venue: string;
   date: string;
   price: number;
+  image: string;
+  venue: Venue;
 };
 
 export type Artist = {
   id: number;
-  name: string;
+  stageName: string;
   bio: string;
+  image: string;
 }
 
 export type Venue = {
   id: number;
   name: string;
-  location: string;
+  city: string;
   capacity: number;
+  image: string;
 };
 
 type DataContextType = {
