@@ -7,6 +7,7 @@ import VenueListPage from './pages/VenueListPage/VenueListPage';
 import VenueBookingPage from './pages/VenueBookingPage/VenueBookingPage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
+import { DataProvider } from './context/DataContext.tsx';
 
 function PageLayout() {
   return (
@@ -18,7 +19,7 @@ function PageLayout() {
 
 function App() {
   return (
-    <>
+    <DataProvider>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<PageLayout/>}>
@@ -34,7 +35,7 @@ function App() {
             <Route path="venues/:venueId" element={<VenueBookingPage />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </DataProvider>
   );
 }
 

@@ -1,5 +1,7 @@
 package com.eventscoordinator.backend.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,6 +18,7 @@ import com.eventscoordinator.backend.dto.ArtistResponse;
 import com.eventscoordinator.backend.security.AppAccountPrincipal;
 import com.eventscoordinator.backend.service.ArtistService;
 
+
 @RestController
 @RequestMapping("/api/artists")
 public class ArtistController {
@@ -30,6 +33,11 @@ public class ArtistController {
     public ResponseEntity<ArtistResponse> createProfile(@AuthenticationPrincipal AppAccountPrincipal principal, @RequestBody ArtistProfileRequest request) {
         ArtistResponse response = artistService.createProfile(principal.getAccount(), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("")
+    public List<ArtistResponse> getAll() {
+        return artistService.getAll();
     }
 
     @GetMapping("/{id}")

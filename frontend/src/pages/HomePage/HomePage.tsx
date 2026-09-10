@@ -1,103 +1,101 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef} from "react";
 import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
-
-
-const API_URL = import.meta.env.VITE_API_URL;
+import FloatingSearchBar from "../../components/FloatingSearchBar";
+import { useData, type Artist, type Event, type Venue } from "../../context/DataContext";
 
 /**
  * TODO:
  * Navigation for event buttons, artists?, venues, view all events/venues, search for events or venues or artists
  */
 
-interface EventItem {
-  id: number;
-  description: string;
-  title: string;
-  venue: string;
-  date: string;
-  price: string;
-  image: string;
-}
-
-interface Artist {
-  name: string;
-  genre: string;
-  image: string;
-}
-
-interface Venue {
-  id: number;
-  name: string;
-  city: string;
-  capacity: string;
-  image: string;
-}
-
 const CATEGORIES: string[] = ["All", "Music", "Comedy", "Theater", "Sports", "Festivals", "DJ/Electronic"];
 
-const EVENTS: EventItem[] = [
-  {
-    id: 1,
-    description: "DJ HYPERNOVA",
-    title: "Neon Horizon Tour",
-    venue: "The Soundstage Arena, LA",
-    date: "Fri, Oct 24 • 9:00 PM",
-    price: "45.00",
-    image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80",
-  },
-  {
-    id: 2,
-    description: "MARCUS STERLING",
-    title: "Late Night Laughs",
-    venue: "Downtown Comedy Lounge",
-    date: "Sat, Oct 25 • 8:00 PM",
-    price: "25.00",
-    image: "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=800&q=80",
-  },
-  {
-    id: 3,
-    description: "STRATFORD THEATER GUILD",
-    title: "The Tragedy of Hamlet",
-    venue: "Grand Opera House",
-    date: "Sun, Oct 26 • 2:00 PM",
-    price: "60.00",
-    image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80",
-  },
-];
+// interface EventItem {
+//   id: number;
+//   description: string;
+//   title: string;
+//   venue: string;
+//   date: string;
+//   price: string;
+//   image: string;
+// }
 
-const ARTISTS: Artist[] = [
-  { name: "DJ Hypernova", genre: "Electronic", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80" },
-  { name: "Marcus Sterling", genre: "Comedy", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" },
-  { name: "Vance Duo", genre: "Indie Pop", image: "https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?w=200&q=80" },
-  { name: "Alina Grace", genre: "R&B / Soul", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" },
-  { name: "Kinetix", genre: "Synthwave", image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&q=80" },
-  { name: "The Guild Players", genre: "Theater", image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=200&q=80" },
-];
+// interface Artist {
+//   name: string;
+//   genre: string;
+//   image: string;
+// }
 
-const VENUES: Venue[] = [
-  {
-    id: 3,
-    name: "The Soundstage Arena",
-    city: "Los Angeles, CA",
-    capacity: "12,500",
-    image: "https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80",
-  },
-  {
-    id: 1,
-    name: "Downtown Comedy Lounge",
-    city: "San Francisco, CA",
-    capacity: "450",
-    image: "https://images.unsplash.com/photo-1470753937643-efeb931202a9?w=800&q=80",
-  },
-  {
-    id: 2,
-    name: "Grand Opera House",
-    city: "Chicago, IL",
-    capacity: "2,200",
-    image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80",
-  },
-];
+// interface Venue {
+//   id: number;
+//   name: string;
+//   city: string;
+//   capacity: string;
+//   image: string;
+// }
+// const EVENTS: EventItem[] = [
+//   {
+//     id: 1,
+//     description: "DJ HYPERNOVA",
+//     title: "Neon Horizon Tour",
+//     venue: "The Soundstage Arena, LA",
+//     date: "Fri, Oct 24 • 9:00 PM",
+//     price: "45.00",
+//     image: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80",
+//   },
+//   {
+//     id: 2,
+//     description: "MARCUS STERLING",
+//     title: "Late Night Laughs",
+//     venue: "Downtown Comedy Lounge",
+//     date: "Sat, Oct 25 • 8:00 PM",
+//     price: "25.00",
+//     image: "https://images.unsplash.com/photo-1585699324551-f6c309eedeca?w=800&q=80",
+//   },
+//   {
+//     id: 3,
+//     description: "STRATFORD THEATER GUILD",
+//     title: "The Tragedy of Hamlet",
+//     venue: "Grand Opera House",
+//     date: "Sun, Oct 26 • 2:00 PM",
+//     price: "60.00",
+//     image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80",
+//   },
+// ];
+
+// const ARTISTS: Artist[] = [
+//   { name: "DJ Hypernova", genre: "Electronic", image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80" },
+//   { name: "Marcus Sterling", genre: "Comedy", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&q=80" },
+//   { name: "Vance Duo", genre: "Indie Pop", image: "https://images.unsplash.com/photo-1521337581100-8ca9a73a5f79?w=200&q=80" },
+//   { name: "Alina Grace", genre: "R&B / Soul", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80" },
+//   { name: "Kinetix", genre: "Synthwave", image: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&q=80" },
+//   { name: "The Guild Players", genre: "Theater", image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=200&q=80" },
+// ];
+
+// const VENUES: Venue[] = [
+//   {
+//     id: 3,
+//     name: "The Soundstage Arena",
+//     city: "Los Angeles, CA",
+//     capacity: "12,500",
+//     image: "https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80",
+//   },
+//   {
+//     id: 1,
+//     name: "Downtown Comedy Lounge",
+//     city: "San Francisco, CA",
+//     capacity: "450",
+//     image: "https://images.unsplash.com/photo-1470753937643-efeb931202a9?w=800&q=80",
+//   },
+//   {
+//     id: 2,
+//     name: "Grand Opera House",
+//     city: "Chicago, IL",
+//     capacity: "2,200",
+//     image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80",
+//   },
+// ];
 
 /* ---------- Inline icon components (no icon library) ---------- */
 
@@ -154,10 +152,11 @@ const NavBar: React.FC = () => {
         <span>Eventa</span>
       </div>
 
-      <div className="navbar-search">
+      {/* <div className="navbar-search">
         <SearchIcon />
         <input type="text" placeholder="Search artists, venues, locations..." />
-      </div>
+      </div> */}
+      <FloatingSearchBar items={[]}/>
 
       <nav className="navbar-links">
         <a href="#" className="active">Events</a>
@@ -173,6 +172,7 @@ const NavBar: React.FC = () => {
   );
 };
 
+
 const Hero: React.FC = () => {
   const [query, setQuery] = useState<string>("");
 
@@ -180,16 +180,19 @@ const Hero: React.FC = () => {
     <section className="hero">
       <p className="hero-eyebrow">LIVE EXPERIENCES AWAIT</p>
       <h1>Discover Live Events Near You</h1>
-      <div className="hero-search">
+      <FloatingSearchBar items={[]}/>
+      {/* <div className="hero-search">
         <SearchIcon size={20} />
         <input
           type="text"
           value={query}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setQuery(e.target.value)
+          }}
           placeholder="Search artists, venues, comedy shows, live concerts..."
         />
         <button>Search</button>
-      </div>
+      </div> */}
     </section>
   );
 };
@@ -227,7 +230,7 @@ const SectionHeader= ({ title, linkText } : SectionHeaderProps) => {
 };
 
 
-const EventCard: React.FC<{ event: EventItem }> = ({ event }) => {
+const EventCard: React.FC<{ event: Event }> = ({ event }) => {
   const navigate = useNavigate();
 
   return (
@@ -265,11 +268,13 @@ const EventCard: React.FC<{ event: EventItem }> = ({ event }) => {
 };
 
 const ArtistItem: React.FC<{ artist: Artist }> = ({ artist }) => {
+  const image = "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80";
   return (
     <div className="artist-item">
-      <img src={artist.image} alt={artist.name} />
+      {/* <img src={artist.image} alt={artist.name} /> */}
+      <img src={image} alt={artist.name} />
       <p className="artist-name">{artist.name}</p>
-      <p className="artist-genre">{artist.genre}</p>
+      <p className="artist-genre">{artist.bio}</p>
     </div>
   );
 };
@@ -283,7 +288,7 @@ const VenueCard: React.FC<{ venue: Venue }> = ({ venue }) => {
         <p className="venue-name">{venue.name}</p>
         <div className="card-meta">
           <MapPinIcon />
-          <span>{venue.city}</span>
+          <span>{venue.location}</span>
         </div>
         <p className="venue-capacity">Capacity: {venue.capacity}</p>
       </div>
@@ -344,45 +349,21 @@ const Footer = () => {
 };
 
 const HomePage = () => {
-  const [venues, setVenues] = useState<Venue[]>([]);
-  const [events, setEvents] = useState<EventItem[]>([]);
+  const { events, venues, artists, loadEvents, loadArtists, loadVenues } = useData();
 
-  const loadVenues = useCallback(async () => {
-    if (venues.length > 0) {
-      return;
-    }
+  console.log(artists);
 
-    try {
-      const response = await fetch(`${API_URL}/venues`);
-      console.log(response);
-      let data = await response.json();
-
-      setVenues(data);
-    } catch (e) {
-      console.log('error: ' + e);
-    }
-  }, [venues]);
-
-  const loadEvents = useCallback(async () => {
-    if (events.length > 0) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/events`);
-      console.log(response);
-      let data = await response.json();
-
-      setEvents(data);
-    } catch (e) {
-      console.log('error: ' + e);
-    }
-  }, [events]);
+  useEffect(() => {
+    loadEvents();
+  }, []);
 
   useEffect(() => {
     loadVenues();
-    loadEvents();
-  });
+  }, []);
+
+  useEffect(() => {
+    loadArtists();
+  }, []);
 
   return (
     <div className="eventa">
@@ -402,7 +383,7 @@ const HomePage = () => {
       <section>
         <SectionHeader title="Popular Artists" linkText="Explore Artists" />
         <div className="artists-row">
-          {ARTISTS.map((artist) => (
+          {artists.map((artist) => (
             <ArtistItem key={artist.name} artist={artist} />
           ))}
         </div>
@@ -423,4 +404,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
-export { SectionHeader, EVENTS, EventCard };
+export { SectionHeader, EventCard };
