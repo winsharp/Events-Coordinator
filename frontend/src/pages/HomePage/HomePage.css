@@ -320,6 +320,24 @@
   margin: 0;
 }
 
+.card {
+  position: relative; /* 1. Establishes a boundary for the absolute link */
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 2. The magic that expands the clickable area */
+.card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0; /* Spreads the invisible hitbox across the entire .card */
+  z-index: 1; 
+}
+
 .btn-buy {
   background: var(--violet);
   color: #fff;

@@ -3,18 +3,9 @@ import React, {
   useMemo,
   useRef,
   useState,
-  KeyboardEvent,
+  type KeyboardEventHandler,
+  type ReactElement,
 } from "react";
-
-/**
- * FloatingSearchBar
- * A self-contained, dependency-free (no Tailwind) search bar that floats
- * over a page, expands into a results panel, and groups matches into
- * sections — Events, Venues, Artists.
- *
- * Drop the file in and render <FloatingSearchBar items={...} /> — styles
- * are injected once via a <style> tag, so nothing else needs to be wired up.
- */
 
 export type ItemCategory = "event" | "venue" | "artist";
 
@@ -41,7 +32,7 @@ const CATEGORY_LABEL: Record<ItemCategory, string> = {
   artist: "Artists",
 };
 
-const CATEGORY_ICON: Record<ItemCategory, JSX.Element> = {
+const CATEGORY_ICON: Record<ItemCategory, ReactElement> = {
   event: (
     <svg viewBox="0 0 20 20" width="16" height="16" fill="none">
       <rect x="3" y="4.5" width="14" height="12" rx="2" stroke="currentColor" strokeWidth="1.4" />
@@ -135,7 +126,7 @@ export default function FloatingSearchBar({
     inputRef.current?.blur();
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+  function handleKeyDown(event: any) {
     if (event.key === "ArrowDown") {
       event.preventDefault();
       if (flatResults.length === 0) return;
