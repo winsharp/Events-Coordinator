@@ -74,4 +74,14 @@ public class VenueAvailabilityService {
                 booked ? e.getArtist().getStageName() : null
         );
     }
+
+    public List<VenueDateResponse> getDatesForVenue(Long venueId) {
+        if (!venueRepository.existsById(venueId)) {
+            throw new IllegalArgumentException("Venue not found");
+        }
+        return eventRepository.findByVenueIdAndArtistIsNull(venueId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 }

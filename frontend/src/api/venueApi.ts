@@ -14,6 +14,14 @@ interface ApiErrorBody {
     error?: string;
 }
 
+export interface VenueResponse {
+    id: number;
+    username: string;
+    name: string;
+    city: string;
+    capacity: number;
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
     if (!res.ok) {
         let message = `Request failed with status ${res.status}`;
@@ -29,6 +37,14 @@ async function handleResponse<T>(res: Response): Promise<T> {
         return undefined as T;
     }
     return res.json();
+}
+
+export async function getMyVenueProfile(): Promise<VenueResponse> {
+    const res = await fetch(`${API_BASE}/venues/me`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse<VenueResponse>(res);
 }
 
 export async function getMyDates(): Promise<VenueDateResponse[]> {

@@ -10,4 +10,5 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
     List<Event> findByVenueId(Long venueId);
     boolean existsByVenueIdAndEventDate(Long venueId, LocalDate eventDate);
+    List<Event> findByVenueIdAndArtistIsNull(Long venueId);
 }

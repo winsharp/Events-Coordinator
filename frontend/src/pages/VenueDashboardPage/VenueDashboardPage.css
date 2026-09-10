@@ -28,3 +28,9 @@
     border-radius: var(--radius-md);
     padding: var(--spacing-xl);
 }
+
+.venue-dashboard-subtitle {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-2xl);
+}
