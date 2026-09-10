@@ -6,3 +6,4 @@ BACKLOG.html
 
 # Local config with real DB credentials — see application.properties.example
 backend/src/main/resources/application.properties
+frontend/.env
