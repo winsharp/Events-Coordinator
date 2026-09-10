@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
+
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 /**
  * TODO:
@@ -9,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 interface EventItem {
   id: number;
-  tag: string;
+  description: string;
   title: string;
   venue: string;
   date: string;
@@ -24,8 +27,9 @@ interface Artist {
 }
 
 interface Venue {
+  id: number;
   name: string;
-  location: string;
+  city: string;
   capacity: string;
   image: string;
 }
@@ -35,7 +39,7 @@ const CATEGORIES: string[] = ["All", "Music", "Comedy", "Theater", "Sports", "Fe
 const EVENTS: EventItem[] = [
   {
     id: 1,
-    tag: "DJ HYPERNOVA",
+    description: "DJ HYPERNOVA",
     title: "Neon Horizon Tour",
     venue: "The Soundstage Arena, LA",
     date: "Fri, Oct 24 • 9:00 PM",
@@ -44,7 +48,7 @@ const EVENTS: EventItem[] = [
   },
   {
     id: 2,
-    tag: "MARCUS STERLING",
+    description: "MARCUS STERLING",
     title: "Late Night Laughs",
     venue: "Downtown Comedy Lounge",
     date: "Sat, Oct 25 • 8:00 PM",
@@ -53,7 +57,7 @@ const EVENTS: EventItem[] = [
   },
   {
     id: 3,
-    tag: "STRATFORD THEATER GUILD",
+    description: "STRATFORD THEATER GUILD",
     title: "The Tragedy of Hamlet",
     venue: "Grand Opera House",
     date: "Sun, Oct 26 • 2:00 PM",
@@ -73,20 +77,23 @@ const ARTISTS: Artist[] = [
 
 const VENUES: Venue[] = [
   {
+    id: 3,
     name: "The Soundstage Arena",
-    location: "Los Angeles, CA",
+    city: "Los Angeles, CA",
     capacity: "12,500",
     image: "https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80",
   },
   {
+    id: 1,
     name: "Downtown Comedy Lounge",
-    location: "San Francisco, CA",
+    city: "San Francisco, CA",
     capacity: "450",
     image: "https://images.unsplash.com/photo-1470753937643-efeb931202a9?w=800&q=80",
   },
   {
+    id: 2,
     name: "Grand Opera House",
-    location: "Chicago, IL",
+    city: "Chicago, IL",
     capacity: "2,200",
     image: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80",
   },
@@ -225,9 +232,10 @@ const EventCard: React.FC<{ event: EventItem }> = ({ event }) => {
 
   return (
     <div className="card">
-      <img src={event.image} alt={event.title} />
+      {/* <img src={event.image} alt={event.title} /> */}
+      <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80" alt={event.title} />
       <div className="card-body">
-        <p className="card-tag">{event.tag}</p>
+        <p className="card-tag">{event.description}</p>
         <h3 className="card-title">{event.title}</h3>
         <div className="card-meta">
           <MapPinIcon />
@@ -269,12 +277,13 @@ const ArtistItem: React.FC<{ artist: Artist }> = ({ artist }) => {
 const VenueCard: React.FC<{ venue: Venue }> = ({ venue }) => {
   return (
     <div className="card">
-      <img className="venue-img" src={venue.image} alt={venue.name} />
+      {/* <img className="venue-img" src={venue.image} alt={venue.name} /> */}
+      <img className="venue-img" src="https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80" alt={venue.name} />
       <div className="card-body">
         <p className="venue-name">{venue.name}</p>
         <div className="card-meta">
           <MapPinIcon />
-          <span>{venue.location}</span>
+          <span>{venue.city}</span>
         </div>
         <p className="venue-capacity">Capacity: {venue.capacity}</p>
       </div>
@@ -335,6 +344,46 @@ const Footer = () => {
 };
 
 const HomePage = () => {
+  const [venues, setVenues] = useState<Venue[]>([]);
+  const [events, setEvents] = useState<EventItem[]>([]);
+
+  const loadVenues = useCallback(async () => {
+    if (venues.length > 0) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/venues`);
+      console.log(response);
+      let data = await response.json();
+
+      setVenues(data);
+    } catch (e) {
+      console.log('error: ' + e);
+    }
+  }, [venues]);
+
+  const loadEvents = useCallback(async () => {
+    if (events.length > 0) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/events`);
+      console.log(response);
+      let data = await response.json();
+
+      setEvents(data);
+    } catch (e) {
+      console.log('error: ' + e);
+    }
+  }, [events]);
+
+  useEffect(() => {
+    loadVenues();
+    loadEvents();
+  });
+
   return (
     <div className="eventa">
       <NavBar />
@@ -344,7 +393,7 @@ const HomePage = () => {
       <section>
         <SectionHeader title="Featured Live Events" linkText="View All Events" />
         <div className="grid-3">
-          {EVENTS.map((event) => (
+          {events.map((event) => (
             <EventCard key={event.id} event={event} />
           ))}
         </div>
@@ -362,7 +411,7 @@ const HomePage = () => {
       <section>
         <SectionHeader title="Top Venues" linkText="All Venues" />
         <div className="grid-3" style={{ paddingBottom: 16 }}>
-          {VENUES.map((venue) => (
+          {venues.map((venue) => (
             <VenueCard key={venue.name} venue={venue} />
           ))}
         </div>
