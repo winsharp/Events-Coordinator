@@ -96,6 +96,12 @@
     background: var(--color-background);
 }
 
+.venue-calendar-cell.unavailable {
+    background: var(--color-background);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
+}
+
 .venue-calendar-legend {
     display: flex;
     align-items: center;

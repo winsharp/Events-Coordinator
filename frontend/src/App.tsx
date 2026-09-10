@@ -3,6 +3,8 @@ import './App.css'
 import HomePage from './pages/HomePage/HomePage'
 import EventDetailPage from "./pages/EventDetailPage/EventDetailPage.tsx";
 import VenueDashboardPage from './pages/VenueDashboardPage/VenueDashboardPage';
+import VenueListPage from './pages/VenueListPage/VenueListPage';
+import VenueBookingPage from './pages/VenueBookingPage/VenueBookingPage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
 
@@ -28,6 +30,8 @@ function App() {
               />
           </Route>
             <Route path="venue/dashboard" element={<VenueDashboardPage />} />
+            <Route path="venues" element={<VenueListPage />} />
+            <Route path="venues/:venueId" element={<VenueBookingPage />} />
         </Routes>
       </BrowserRouter>
     </>
