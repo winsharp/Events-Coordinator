@@ -68,7 +68,7 @@ export default function VenueDashboardPage() {
                 <p>Loading your calendar…</p>
             ) : (
                 <div className="venue-calendar-card">
-                    <VenueCalendar dates={dates} onAddDate={handleAddDate} onRemoveDate={handleRemoveDate} />
+                    <VenueCalendar dates={dates} mode="manage" onAddDate={handleAddDate} onRemoveDate={handleRemoveDate} />
                 </div>
             )}
         </div>

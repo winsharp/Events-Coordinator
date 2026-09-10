@@ -4,8 +4,10 @@ import "./VenueCalendar.css";
 
 interface VenueCalendarProps {
     dates: VenueDateResponse[];
-    onAddDate: (isoDate: string) => void;
-    onRemoveDate: (id: number) => void;
+    mode: "manage" | "book";
+    onAddDate?: (isoDate: string) => void;
+    onRemoveDate?: (id: number) => void;
+    onBookDate?: (id: number) => void;
 }
 
 function toIsoDate(date: Date): string {
@@ -15,7 +17,13 @@ function toIsoDate(date: Date): string {
     return `${year}-${month}-${day}`;
 }
 
-export default function VenueCalendar({ dates, onAddDate, onRemoveDate }: VenueCalendarProps) {
+export default function VenueCalendar({
+                                          dates,
+                                          mode,
+                                          onAddDate,
+                                          onRemoveDate,
+                                          onBookDate,
+                                      }: VenueCalendarProps) {
     const [viewDate, setViewDate] = useState(new Date());
 
     const year = viewDate.getFullYear();
@@ -36,13 +44,20 @@ export default function VenueCalendar({ dates, onAddDate, onRemoveDate }: VenueC
         const iso = toIsoDate(new Date(year, month, day));
         const existing = dateMap.get(iso);
 
-        if (!existing) {
-            if (iso < today) return; // ignore clicks on past dates
-            onAddDate(iso);
-        } else if (existing.status === "OPEN") {
-            onRemoveDate(existing.id);
+        if (mode === "manage") {
+            if (!existing) {
+                if (iso < today) return;
+                onAddDate?.(iso);
+            } else if (existing.status === "OPEN") {
+                onRemoveDate?.(existing.id);
+            }
+            return;
         }
-        // BOOKED dates are not clickable — handled via CSS below
+
+        // book mode: only OPEN days are clickable, and clicking books them
+        if (existing && existing.status === "OPEN") {
+            onBookDate?.(existing.id);
+        }
     }
 
     return (
@@ -64,15 +79,31 @@ export default function VenueCalendar({ dates, onAddDate, onRemoveDate }: VenueC
                     const iso = toIsoDate(new Date(year, month, day));
                     const entry = dateMap.get(iso);
                     const isPast = iso < today;
-                    const statusClass = entry ? entry.status.toLowerCase() : isPast ? "past" : "";
+
+                    let statusClass = "";
+                    let isDisabled: boolean;
+
+                    if (mode === "manage") {
+                        statusClass = entry ? entry.status.toLowerCase() : isPast ? "past" : "";
+                        isDisabled = entry?.status === "BOOKED" || (isPast && !entry);
+                    } else {
+                        statusClass = entry?.status === "OPEN" ? "open bookable" : "unavailable";
+                        isDisabled = entry?.status !== "OPEN";
+                    }
 
                     return (
                         <button
                             key={idx}
                             className={`venue-calendar-cell ${statusClass}`}
-                            disabled={entry?.status === "BOOKED" || (isPast && !entry)}
+                            disabled={isDisabled}
                             onClick={() => handleDayClick(day)}
-                            title={entry?.status === "BOOKED" ? `Booked: ${entry.artistStageName}` : undefined}
+                            title={
+                                mode === "manage" && entry?.status === "BOOKED"
+                                    ? `Booked: ${entry.artistStageName}`
+                                    : mode === "book" && entry?.status === "OPEN"
+                                        ? "Click to book this date"
+                                        : undefined
+                            }
                         >
                             {day}
                         </button>
@@ -81,9 +112,15 @@ export default function VenueCalendar({ dates, onAddDate, onRemoveDate }: VenueC
             </div>
 
             <div className="venue-calendar-legend">
-                <span className="legend-item open">Open</span>
-                <span className="legend-item booked">Booked</span>
-                <span className="legend-item">Click a day to add/remove availability</span>
+                {mode === "manage" ? (
+                    <>
+                        <span className="legend-item open">Open</span>
+                        <span className="legend-item booked">Booked</span>
+                        <span className="legend-item">Click a day to add/remove availability</span>
+                    </>
+                ) : (
+                    <span className="legend-item open">Click a highlighted day to book it</span>
+                )}
             </div>
         </div>
     );
