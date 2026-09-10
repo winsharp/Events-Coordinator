@@ -7,31 +7,33 @@ The app is two pieces that run side by side: a Spring Boot backend (port `8080`)
 
 ### 1. Set up the database
 
-Create the database the backend expects (default name `eventscoordinator`):
+Create the database the backend expects (default name `eventscoordinator`). In PowerShell or Command Prompt:
 
-```bash
+```powershell
 psql -U postgres -c "CREATE DATABASE eventscoordinator;"
 ```
 
-You'll need a local PostgreSQL server running first — install it if you don't already have one.
+You'll need a local PostgreSQL server running first — install it if you don't already have one, and make sure `psql` is on your `PATH` (it lives under `C:\Program Files\PostgreSQL\<version>\bin` by default).
 
 ### 2. Configure the backend
 
 Copy the example config and fill in your own local Postgres password:
 
-```bash
-cd backend/src/main/resources
-cp application.properties.example application.properties
+```powershell
+cd backend\src\main\resources
+copy application.properties.example application.properties
 ```
 
 Open `application.properties` and set `spring.datasource.password` to whatever you set for your local `postgres` user. Leave everything else as-is unless your Postgres setup differs (different port, username, etc.).
 
 ### 3. Run the backend
 
-```bash
+```powershell
 cd backend
-./mvnw spring-boot:run
+.\mvnw.cmd spring-boot:run
 ```
+
+(Note the `.cmd` — `./mvnw` is the Mac/Linux wrapper and won't run on Windows.)
 
 On first run, this automatically creates all the tables (`ddl-auto: update` — no separate migration step needed) and seeds a few sample venues/artists/events so there's something to look at right away. Leave this running — it serves the API at `http://localhost:8080`.
 
@@ -39,7 +41,7 @@ On first run, this automatically creates all the tables (`ddl-auto: update` — 
 
 In a separate terminal:
 
-```bash
+```powershell
 cd frontend
 npm install
 npm run dev
