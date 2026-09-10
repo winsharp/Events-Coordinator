@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 import HomePage from "./pages/HomePage/HomePage";
@@ -17,47 +17,65 @@ import artistPfp from "./assets/malcolm-todd.jpeg";
 
 import { DataProvider } from "./context/DataContext.tsx";
 import PageLayout from './pages/PageLayout/PageLayout.tsx';
+import { AuthProvider, useAuth } from "./context/AuthContext.tsx";
+
+function ProtectedLayout() {
+  const { isAuthenticated } = useAuth();
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/login" replace />
+  // }
+  return (
+    <PageLayout/>
+  )
+}
 
 function App() {
   return (
-    <DataProvider>
-      <BrowserRouter>
-        <Routes>
+    <AuthProvider>
+      <DataProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Authentication */}
+            <Route path="/account-type" element={<AccountTypePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          {/* Authentication */}
-          <Route path="/" element={<AccountTypePage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+            {/* Existing application */}
+            <Route path="/" element={<PageLayout />}>
+              <Route element={<HomePage />} index />
+              <Route path='/home' element={<HomePage />}/>
 
-          {/* Existing application */}
-          <Route path="/home" element={<PageLayout />}>
-            <Route index element={<HomePage />} />
+              <Route
+                path="events/:eventId"
+                element={<EventDetailPage event={sampleEvent} />}
+              />
 
-            <Route
-              path="events/:eventId"
-              element={<EventDetailPage event={sampleEvent} />}
-            />
-          </Route>
+              <Route
+                path="/venue/dashboard"
+                element={<VenueDashboardPage />}
+              />
 
-          <Route
-            path="/venue/dashboard"
-            element={<VenueDashboardPage />}
-          />
+              <Route
+                path="/venues"
+                element={<VenueListPage />}
+              />
 
-          <Route
-            path="/venues"
-            element={<VenueListPage />}
-          />
+              <Route
+                path="/venues"
+                element={<VenueListPage />}
+              />
 
-          <Route
-            path="/venues/:venueId"
-            element={<VenueBookingPage />}
-          />
+              <Route
+                path="/venues/:venueId"
+                element={<VenueBookingPage />}
+              />
 
-            <Route path="account" element={<CustomerProfilePage />} />
-        </Routes>
-      </BrowserRouter>
-    </DataProvider>
+              <Route path="account" element={<CustomerProfilePage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </DataProvider >
+    </AuthProvider>
   );
 }
 
