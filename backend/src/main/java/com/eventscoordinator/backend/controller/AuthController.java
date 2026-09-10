@@ -27,6 +27,7 @@ import com.eventscoordinator.backend.service.AuthService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,7 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody @Valid  RegisterRequest request) {
         Account account = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(account));
     }

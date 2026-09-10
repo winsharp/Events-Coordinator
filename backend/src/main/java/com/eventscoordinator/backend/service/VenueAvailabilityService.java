@@ -35,6 +35,8 @@ public class VenueAvailabilityService {
         }
 
         Event event = new Event(venue, null, request.eventDate());
+        event.setTitle(request.title());
+        event.setDescription(request.description());
         return toResponse(eventRepository.save(event));
     }
 

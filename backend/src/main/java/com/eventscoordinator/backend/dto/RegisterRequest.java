@@ -1,4 +1,19 @@
 package com.eventscoordinator.backend.dto;
 
-public record RegisterRequest(String username, String email, String password, String role, String firstName, String lastName) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Email;
+public record RegisterRequest(
+    @NotBlank 
+    String username,
+
+    @NotBlank 
+    @Email 
+     String email, 
+    
+     @NotBlank 
+    String password,
+
+     String role,
+      String firstName, 
+      String lastName) {
 }
