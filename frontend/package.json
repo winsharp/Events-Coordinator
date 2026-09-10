@@ -6,22 +6,58 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "lint": "oxlint -c oxlint.json src",
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "coverage": "vitest run --coverage",
+    "test:run": "vitest run"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
+    "@mantine/core": "^9.6.1",
+    "@mantine/form": "^9.6.1",
+    "@mantine/hooks": "^9.6.1",
+    "@mantine/notifications": "^9.6.1",
+    "@nivo/bar": "^0.99.0",
+    "@nivo/core": "^0.99.0",
+    "@nivo/line": "^0.99.0",
+    "@tabler/icons-react": "^3.46.0",
+    "@tanstack/react-query": "^5.102.8",
+    "@visx/visx": "^4.0.0",
     "axios": "^1.20.0",
+    "qrcode.react": "^4.2.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.3"
+    "react-hook-form": "^7.87.0",
+    "react-router-dom": "^7.18.3",
+    "zod": "^4.6.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.1.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
+    "jsdom": "^30.0.1",
+    "msw": "^2.15.0",
     "oxlint": "^1.79.0",
+    "prettier": "^3.9.6",
     "typescript": "~6.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "vitest": "^5.0.0"
+  },
+  "allowScripts": {
+    "msw@2.15.0": true
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
   }
 }

@@ -1,81 +1,63 @@
 package com.eventscoordinator.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "artist")
+@Table(
+    name = "artists",
+    uniqueConstraints = @UniqueConstraint(name = "uk_artist_account", columnNames = "account_id"))
 public class Artist {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Version private long version;
 
-    @OneToOne
-    @JoinColumn(name = "account_id", nullable = false, unique = true)
-    private Account account;
+  @OneToOne(optional = false, fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id", nullable = false)
+  private Account account;
 
-    @Column(name = "stage_name", nullable = false)
-    private String stageName;
+  @Column(name = "stage_name", nullable = false, length = 120)
+  private String stageName;
 
-    private String genre;
+  @Column(nullable = false, length = 80)
+  private String genre;
 
-    @Column(length = 2000)
-    private String bio;
+  @Column(length = 2000)
+  private String bio;
 
-    public Artist() {
-    }
+  protected Artist() {}
 
-    public Artist(Account account, String stageName, String genre, String bio) {
-        this.account = account;
-        this.stageName = stageName;
-        this.genre = genre;
-        this.bio = bio;
-    }
+  public Artist(Account a, String s, String g, String b) {
+    account = a;
+    stageName = s;
+    genre = g;
+    bio = b;
+  }
 
-    public Long getId() {
-        return id;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  public Account getAccount() {
+    return account;
+  }
 
-    public Account getAccount() {
-        return account;
-    }
+  public String getStageName() {
+    return stageName;
+  }
 
-    public void setAccount(Account account) {
-        this.account = account;
-    }
+  public String getGenre() {
+    return genre;
+  }
 
-    public String getStageName() {
-        return stageName;
-    }
+  public String getBio() {
+    return bio;
+  }
 
-    public void setStageName(String stageName) {
-        this.stageName = stageName;
-    }
-
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
+  public void update(String s, String g, String b) {
+    stageName = s;
+    genre = g;
+    bio = b;
+  }
 }

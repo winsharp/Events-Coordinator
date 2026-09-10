@@ -1,11 +1,12 @@
 package com.eventscoordinator.backend.repository;
 
-import java.util.Optional;
-
+import com.eventscoordinator.backend.model.Venue;
+import java.util.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.eventscoordinator.backend.model.Venue;
-
 public interface VenueRepository extends JpaRepository<Venue, Long> {
-    Optional<Venue> findByAccountId(Long accountId);
+  Optional<Venue> findByAccountId(Long accountId);
+
+  List<Venue> findByNameContainingIgnoreCaseOrCityContainingIgnoreCaseOrderByName(
+      String q, String q2);
 }

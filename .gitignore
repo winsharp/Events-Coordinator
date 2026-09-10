@@ -1,9 +1,31 @@
-BACKLOG.html
-
-# Editor
+# Operating system and editors
+.DS_Store
+.idea/
 .vscode/*
 !.vscode/extensions.json
+*.swp
 
-# Local config with real DB credentials — see application.properties.example
-backend/src/main/resources/application.properties
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+backend/.env
 frontend/.env
+
+# Frontend dependencies and generated output
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results.json
+frontend/*.tsbuildinfo
+
+# Backend generated output and local H2 files
+backend/target/
+backend/data/
+backend/*.mv.db
+backend/*.trace.db
+
+# Logs and temporary files
+*.log
+*.tmp
+BACKLOG.html

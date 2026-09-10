@@ -1,80 +1,148 @@
 package com.eventscoordinator.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table(name = "venue")
+@Table(
+    name = "venues",
+    uniqueConstraints = @UniqueConstraint(name = "uk_venue_account", columnNames = "account_id"))
 public class Venue {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Version private long version;
 
-    @OneToOne
-    @JoinColumn(name = "account_id", nullable = false, unique = true)
-    private Account account;
+  @OneToOne(optional = false, fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id", nullable = false)
+  private Account account;
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false, length = 150)
+  private String name;
 
-    private String city;
+  @Column(nullable = false, length = 120)
+  private String address;
 
-    private Integer capacity;
+  @Column(nullable = false, length = 80)
+  private String city;
 
-    public Venue() {
-    }
+  @Column(nullable = false)
+  private int capacity;
 
-    public Venue(Account account, String name, String city, Integer capacity) {
-        this.account = account;
-        this.name = name;
-        this.city = city;
-        this.capacity = capacity;
-    }
+  @Column(length = 2000)
+  private String description;
 
-    public Long getId() {
-        return id;
-    }
+  @Column(name = "contact_email", length = 254)
+  private String contactEmail;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @Column(length = 500)
+  private String website;
 
-    public Account getAccount() {
-        return account;
-    }
+  @Column(length = 1000)
+  private String genres;
 
-    public void setAccount(Account account) {
-        this.account = account;
-    }
+  @Column(length = 1000)
+  private String amenities;
 
-    public String getName() {
-        return name;
-    }
+  @Column(nullable = false)
+  private boolean published;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  protected Venue() {}
 
-    public String getCity() {
-        return city;
-    }
+  public Venue(
+      Account account,
+      String name,
+      String address,
+      String city,
+      int capacity,
+      String description,
+      String contactEmail,
+      String website,
+      String genres,
+      String amenities,
+      boolean published) {
+    this.account = account;
+    update(
+        name,
+        address,
+        city,
+        capacity,
+        description,
+        contactEmail,
+        website,
+        genres,
+        amenities,
+        published);
+  }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public Integer getCapacity() {
-        return capacity;
-    }
+  public Account getAccount() {
+    return account;
+  }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
+  public String getName() {
+    return name;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public String getCity() {
+    return city;
+  }
+
+  public int getCapacity() {
+    return capacity;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public String getContactEmail() {
+    return contactEmail;
+  }
+
+  public String getWebsite() {
+    return website;
+  }
+
+  public String getGenres() {
+    return genres;
+  }
+
+  public String getAmenities() {
+    return amenities;
+  }
+
+  public boolean isPublished() {
+    return published;
+  }
+
+  public void update(
+      String name,
+      String address,
+      String city,
+      int capacity,
+      String description,
+      String contactEmail,
+      String website,
+      String genres,
+      String amenities,
+      boolean published) {
+    this.name = name;
+    this.address = address;
+    this.city = city;
+    this.capacity = capacity;
+    this.description = description;
+    this.contactEmail = contactEmail;
+    this.website = website;
+    this.genres = genres;
+    this.amenities = amenities;
+    this.published = published;
+  }
 }

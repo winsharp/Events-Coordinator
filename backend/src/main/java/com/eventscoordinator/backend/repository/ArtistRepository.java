@@ -1,11 +1,12 @@
 package com.eventscoordinator.backend.repository;
 
-import java.util.Optional;
-
+import com.eventscoordinator.backend.model.Artist;
+import java.util.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.eventscoordinator.backend.model.Artist;
-
 public interface ArtistRepository extends JpaRepository<Artist, Long> {
-    Optional<Artist> findByAccountId(Long accountId);
+  Optional<Artist> findByAccountId(Long accountId);
+
+  List<Artist> findByStageNameContainingIgnoreCaseOrGenreContainingIgnoreCaseOrderByStageName(
+      String q, String q2);
 }
