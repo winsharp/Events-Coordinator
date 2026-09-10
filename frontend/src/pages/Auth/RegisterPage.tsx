@@ -509,7 +509,7 @@ function RegisterPage() {
             </Link>
 
             <Link
-                to="/"
+                to="/account-type"
                 className="change-role-link"
             >
               ← Change account type
