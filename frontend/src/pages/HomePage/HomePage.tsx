@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState, useMemo, useRef} from "react";
+import React, { useCallback, useEffect, useState, useMemo, useRef, type EventHandler, type MouseEventHandler} from "react";
 import "./HomePage.css";
-import { useNavigate } from "react-router-dom";
-import FloatingSearchBar from "../../components/FloatingSearchBar";
+import { Link, useNavigate } from "react-router-dom";
+import FloatingSearchBar, { type SearchItem } from "../../components/FloatingSearchBar";
 import { useData, type Artist, type Event, type Venue } from "../../context/DataContext";
 
 /**
@@ -122,81 +122,6 @@ const CalendarIcon: React.FC = () => (
   </svg>
 );
 
-const FacebookIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-
-const InstagramIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-    <rect x="2" y="2" width="20" height="20" rx="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-  </svg>
-);
-
-const TwitterIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
-  </svg>
-);
-
-/* ---------- Layout components ---------- */
-
-const NavBar: React.FC = () => {
-  return (
-    <header className="navbar">
-      <div className="navbar-logo">
-        <div className="logo-badge">E</div>
-        <span>Eventa</span>
-      </div>
-
-      {/* <div className="navbar-search">
-        <SearchIcon />
-        <input type="text" placeholder="Search artists, venues, locations..." />
-      </div> */}
-      <FloatingSearchBar items={[]}/>
-
-      <nav className="navbar-links">
-        <a href="#" className="active">Events</a>
-        <a href="#">Artists</a>
-        <a href="#">Venues</a>
-      </nav>
-
-      <div className="navbar-actions">
-        <button className="btn-ghost">Sign In</button>
-        <button className="btn-primary">Sign Up</button>
-      </div>
-    </header>
-  );
-};
-
-
-const Hero: React.FC = () => {
-  const [query, setQuery] = useState<string>("");
-
-  return (
-    <section className="hero">
-      <p className="hero-eyebrow">LIVE EXPERIENCES AWAIT</p>
-      <h1>Discover Live Events Near You</h1>
-      <FloatingSearchBar items={[]}/>
-      {/* <div className="hero-search">
-        <SearchIcon size={20} />
-        <input
-          type="text"
-          value={query}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setQuery(e.target.value)
-          }}
-          placeholder="Search artists, venues, comedy shows, live concerts..."
-        />
-        <button>Search</button>
-      </div> */}
-    </section>
-  );
-};
-
 const CategoryPills: React.FC = () => {
   const [active, setActive] = useState<string>("All");
 
@@ -218,13 +143,17 @@ const CategoryPills: React.FC = () => {
 interface SectionHeaderProps {
   title: string;
   linkText: string;
+  link: string;
 }
 
-const SectionHeader= ({ title, linkText } : SectionHeaderProps) => {
+const SectionHeader= ({ title, linkText, link} : SectionHeaderProps) => {
   return (
     <div className="section-header">
       <h2>{title}</h2>
-      <a href="#">{linkText} →</a>
+      <div>
+        <Link to={link}>{linkText}</Link>
+        <span aria-hidden="true"> &rarr;</span>
+      </div>
     </div>
   );
 };
@@ -234,7 +163,14 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="card">
+    <div
+      className="card"
+      onClick={() => {
+        navigate(`/events/${event.id}`, {
+          state: { event },
+        });
+      }}
+    >
       {/* <img src={event.image} alt={event.title} /> */}
       <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80" alt={event.title} />
       <div className="card-body">
@@ -256,9 +192,9 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
           <button
             className="btn-buy"
             onClick={() => {
-                navigate(`/events/${event.id}`, {
-                    state: { event },
-                });
+              navigate(`/events/${event.id}`, {
+                state: { event },
+              });
             }}
           >Buy Tickets</button>
         </div>
@@ -296,62 +232,18 @@ const VenueCard: React.FC<{ venue: Venue }> = ({ venue }) => {
   );
 };
 
-interface FooterColumnProps {
-  title: string;
-  links: string[];
-}
-
-const FooterColumn = ({ title, links } : FooterColumnProps) => {
-  return (
-    <div className="footer-col">
-      <p className="footer-col-title">{title}</p>
-      <ul>
-        {links.map((link) => (
-          <li key={link}>
-            <a href="#">{link}</a>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-inner">
-        <div>
-          <div className="footer-logo">
-            <div className="logo-badge">E</div>
-            <span>Eventa</span>
-          </div>
-          <p className="footer-desc">
-            Your gateway to unforgettable live entertainment. Book verified tickets for
-            concerts, theater, sports, and unique local events.
-          </p>
-        </div>
-
-        <FooterColumn title="Explore" links={["All Events", "Sitemap", "Promotions"]} />
-        <FooterColumn title="For Partners" links={["List an Event", "Venue Portal", "API Access"]} />
-        <FooterColumn title="Company" links={["About Us", "Press Room", "Support"]} />
-      </div>
-
-      <div className="footer-bottom">
-        <p className="footer-copy">© 2025 Eventa Platforms, Inc. All rights reserved.</p>
-        <div className="footer-socials">
-          <a href="#" aria-label="Facebook"><FacebookIcon /></a>
-          <a href="#" aria-label="Instagram"><InstagramIcon /></a>
-          <a href="#" aria-label="Twitter"><TwitterIcon /></a>
-        </div>
-      </div>
-    </footer>
-  );
-};
 
 const HomePage = () => {
   const { events, venues, artists, loadEvents, loadArtists, loadVenues } = useData();
 
-  console.log(artists);
+  const eventItems: SearchItem[] = events.map( (e: Event) : SearchItem => ({id: e.id.toString(), category: "event", title: e.title || ""}));
+  const venueItems: SearchItem[] = venues.map( (v: Venue) : SearchItem => ({id: v.id.toString(), category: "venue", title: v.name || ""}));
+  const artistItems: SearchItem[] = artists.map( (a: Artist) : SearchItem => ({id: a.id.toString(), category: "artist", title: a.name || ""}));
+  const searchItems: SearchItem[] = [...eventItems, ...venueItems, ...artistItems];
+
+  const navigate = useNavigate();
+
+  console.log(searchItems);
 
   useEffect(() => {
     loadEvents();
@@ -367,12 +259,28 @@ const HomePage = () => {
 
   return (
     <div className="eventa">
-      <NavBar />
-      <Hero />
-      {/* <CategoryPills /> */}
+
+      <section className="hero">
+        <p className="hero-eyebrow">LIVE EXPERIENCES AWAIT</p>
+        <h1>Discover Live Events Near You</h1>
+        <FloatingSearchBar 
+          items={searchItems}
+          onSelect={(item: SearchItem) => {{
+            if (item.category === "event") {
+              navigate(`/events/${item.id}`);
+            }
+            if (item.category === "venue") {
+              navigate(`/venues/${item.id}`);
+            }
+            if (item.category === "artist") {
+              navigate(`/artists/${item.id}`);
+            }
+          }}}
+        />
+      </section>
 
       <section>
-        <SectionHeader title="Featured Live Events" linkText="View All Events" />
+        <SectionHeader title="Featured Live Events" linkText="View All Events" link='/events'/>
         <div className="grid-3">
           {events.map((event) => (
             <EventCard key={event.id} event={event} />
@@ -381,24 +289,22 @@ const HomePage = () => {
       </section>
 
       <section>
-        <SectionHeader title="Popular Artists" linkText="Explore Artists" />
+        <SectionHeader title="Popular Artists" linkText="Explore Artists" link='/artists'/>
         <div className="artists-row">
           {artists.map((artist) => (
-            <ArtistItem key={artist.name} artist={artist} />
+            <ArtistItem key={artist.id} artist={artist} />
           ))}
         </div>
       </section>
 
       <section>
-        <SectionHeader title="Top Venues" linkText="All Venues" />
+        <SectionHeader title="Top Venues" linkText="All Venues" link='/venues'/>
         <div className="grid-3" style={{ paddingBottom: 16 }}>
           {venues.map((venue) => (
-            <VenueCard key={venue.name} venue={venue} />
+            <VenueCard key={venue.id} venue={venue} />
           ))}
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };
