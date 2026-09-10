@@ -8,6 +8,8 @@ import VenueBookingPage from './pages/VenueBookingPage/VenueBookingPage';
 import banner from "./assets/event-banner.png";
 import artistPfp from "./assets/malcolm-todd.jpeg";
 import { DataProvider } from './context/DataContext.tsx';
+import LoginPage from "./pages/LoginPage/LoginPage.tsx";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
 
 function PageLayout() {
   return (
@@ -24,12 +26,14 @@ function App() {
         <Routes>
           <Route path='/' element={<PageLayout/>}>
             <Route element={<HomePage />} index/>
-            <Route path='home' element={<HomePage />} index/>
+            <Route path='home' element={<HomePage />} />
               <Route
                   path="events/:eventId"
                   element={<EventDetailPage event={sampleEvent} />}
               />
           </Route>
+           <Route path="login" element={<LoginPage />} />
+           <Route path="register" element={<RegisterPage />} />
             <Route path="venue/dashboard" element={<VenueDashboardPage />} />
             <Route path="venues" element={<VenueListPage />} />
             <Route path="venues/:venueId" element={<VenueBookingPage />} />

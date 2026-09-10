@@ -1,15 +1,34 @@
-import React, { useCallback, useEffect, useState, useMemo, useRef} from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+} from "react";
 import "./HomePage.css";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import FloatingSearchBar from "../../components/FloatingSearchBar";
-import { useData, type Artist, type Event, type Venue } from "../../context/DataContext";
+import {
+  useData,
+  type Artist,
+  type Event,
+  type Venue,
+} from "../../context/DataContext";
 
 /**
  * TODO:
  * Navigation for event buttons, artists?, venues, view all events/venues, search for events or venues or artists
  */
 
-const CATEGORIES: string[] = ["All", "Music", "Comedy", "Theater", "Sports", "Festivals", "DJ/Electronic"];
+const CATEGORIES: string[] = [
+  "All",
+  "Music",
+  "Comedy",
+  "Theater",
+  "Sports",
+  "Festivals",
+  "DJ/Electronic",
+];
 
 // interface EventItem {
 //   id: number;
@@ -100,21 +119,45 @@ const CATEGORIES: string[] = ["All", "Music", "Comedy", "Theater", "Sports", "Fe
 /* ---------- Inline icon components (no icon library) ---------- */
 
 const SearchIcon: React.FC<{ size?: number }> = ({ size = 16 }) => (
-  <svg className="icon" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    className="icon"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <circle cx="11" cy="11" r="8" />
     <line x1="21" y1="21" x2="16.65" y2="16.65" />
   </svg>
 );
 
 const MapPinIcon: React.FC = () => (
-  <svg className="icon" width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    className="icon"
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
     <circle cx="12" cy="10" r="3" />
   </svg>
 );
 
 const CalendarIcon: React.FC = () => (
-  <svg className="icon" width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    className="icon"
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <rect x="3" y="4" width="18" height="18" rx="2" />
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
@@ -123,13 +166,27 @@ const CalendarIcon: React.FC = () => (
 );
 
 const FacebookIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 );
 
 const InstagramIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <rect x="2" y="2" width="20" height="20" rx="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -137,7 +194,14 @@ const InstagramIcon: React.FC = () => (
 );
 
 const TwitterIcon: React.FC = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
     <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z" />
   </svg>
 );
@@ -145,6 +209,8 @@ const TwitterIcon: React.FC = () => (
 /* ---------- Layout components ---------- */
 
 const NavBar: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="navbar">
       <div className="navbar-logo">
@@ -152,26 +218,27 @@ const NavBar: React.FC = () => {
         <span>Eventa</span>
       </div>
 
-      {/* <div className="navbar-search">
-        <SearchIcon />
-        <input type="text" placeholder="Search artists, venues, locations..." />
-      </div> */}
-      <FloatingSearchBar items={[]}/>
+      <FloatingSearchBar items={[]} />
 
       <nav className="navbar-links">
-        <a href="#" className="active">Events</a>
-        <a href="#">Artists</a>
-        <a href="#">Venues</a>
+        <a href="#events" className="active">
+          Events
+        </a>
+        <a href="#artists">Artists</a>
+        <a href="#venues">Venues</a>
       </nav>
 
       <div className="navbar-actions">
-        <button className="btn-ghost">Sign In</button>
-        <button className="btn-primary">Sign Up</button>
+        <button className="btn-ghost" onClick={() => navigate("/login")}>
+          Sign In
+        </button>
+        <button className="btn-primary" onClick={() => navigate("/register")}>
+          Sign Up
+        </button>
       </div>
     </header>
   );
 };
-
 
 const Hero: React.FC = () => {
   const [query, setQuery] = useState<string>("");
@@ -180,7 +247,7 @@ const Hero: React.FC = () => {
     <section className="hero">
       <p className="hero-eyebrow">LIVE EXPERIENCES AWAIT</p>
       <h1>Discover Live Events Near You</h1>
-      <FloatingSearchBar items={[]}/>
+      <FloatingSearchBar items={[]} />
       {/* <div className="hero-search">
         <SearchIcon size={20} />
         <input
@@ -218,17 +285,27 @@ const CategoryPills: React.FC = () => {
 interface SectionHeaderProps {
   title: string;
   linkText: string;
+  linkTarget?: string;
+  onClick?: () => void;
 }
-
-const SectionHeader= ({ title, linkText } : SectionHeaderProps) => {
+const SectionHeader = ({
+  title,
+  linkText,
+  linkTarget,
+  onClick,
+}: SectionHeaderProps) => {
   return (
     <div className="section-header">
       <h2>{title}</h2>
-      <a href="#">{linkText} →</a>
+
+      {onClick ? (
+        <button onClick={onClick}>{linkText} →</button>
+      ) : (
+        <a href={linkTarget}>{linkText} →</a>
+      )}
     </div>
   );
 };
-
 
 const EventCard: React.FC<{ event: Event }> = ({ event }) => {
   const navigate = useNavigate();
@@ -236,7 +313,10 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
   return (
     <div className="card">
       {/* <img src={event.image} alt={event.title} /> */}
-      <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80" alt={event.title} />
+      <img
+        src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80"
+        alt={event.title}
+      />
       <div className="card-body">
         <p className="card-tag">{event.description}</p>
         <h3 className="card-title">{event.title}</h3>
@@ -256,11 +336,13 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
           <button
             className="btn-buy"
             onClick={() => {
-                navigate(`/events/${event.id}`, {
-                    state: { event },
-                });
+              navigate(`/events/${event.id}`, {
+                state: { event },
+              });
             }}
-          >Buy Tickets</button>
+          >
+            Buy Tickets
+          </button>
         </div>
       </div>
     </div>
@@ -268,7 +350,8 @@ const EventCard: React.FC<{ event: Event }> = ({ event }) => {
 };
 
 const ArtistItem: React.FC<{ artist: Artist }> = ({ artist }) => {
-  const image = "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80";
+  const image =
+    "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=200&q=80";
   return (
     <div className="artist-item">
       {/* <img src={artist.image} alt={artist.name} /> */}
@@ -280,10 +363,19 @@ const ArtistItem: React.FC<{ artist: Artist }> = ({ artist }) => {
 };
 
 const VenueCard: React.FC<{ venue: Venue }> = ({ venue }) => {
+  const navigate = useNavigate();
   return (
-    <div className="card">
+    <div
+      className="card"
+      onClick={() => navigate(`/venues/${venue.id}`)}
+      style={{ cursor: "pointer" }}
+    >
       {/* <img className="venue-img" src={venue.image} alt={venue.name} /> */}
-      <img className="venue-img" src="https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80" alt={venue.name} />
+      <img
+        className="venue-img"
+        src="https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&q=80"
+        alt={venue.name}
+      />
       <div className="card-body">
         <p className="venue-name">{venue.name}</p>
         <div className="card-meta">
@@ -301,7 +393,7 @@ interface FooterColumnProps {
   links: string[];
 }
 
-const FooterColumn = ({ title, links } : FooterColumnProps) => {
+const FooterColumn = ({ title, links }: FooterColumnProps) => {
   return (
     <div className="footer-col">
       <p className="footer-col-title">{title}</p>
@@ -326,22 +418,39 @@ const Footer = () => {
             <span>Eventa</span>
           </div>
           <p className="footer-desc">
-            Your gateway to unforgettable live entertainment. Book verified tickets for
-            concerts, theater, sports, and unique local events.
+            Your gateway to unforgettable live entertainment. Book verified
+            tickets for concerts, theater, sports, and unique local events.
           </p>
         </div>
 
-        <FooterColumn title="Explore" links={["All Events", "Sitemap", "Promotions"]} />
-        <FooterColumn title="For Partners" links={["List an Event", "Venue Portal", "API Access"]} />
-        <FooterColumn title="Company" links={["About Us", "Press Room", "Support"]} />
+        <FooterColumn
+          title="Explore"
+          links={["All Events", "Sitemap", "Promotions"]}
+        />
+        <FooterColumn
+          title="For Partners"
+          links={["List an Event", "Venue Portal", "API Access"]}
+        />
+        <FooterColumn
+          title="Company"
+          links={["About Us", "Press Room", "Support"]}
+        />
       </div>
 
       <div className="footer-bottom">
-        <p className="footer-copy">© 2025 Eventa Platforms, Inc. All rights reserved.</p>
+        <p className="footer-copy">
+          © 2025 Eventa Platforms, Inc. All rights reserved.
+        </p>
         <div className="footer-socials">
-          <a href="#" aria-label="Facebook"><FacebookIcon /></a>
-          <a href="#" aria-label="Instagram"><InstagramIcon /></a>
-          <a href="#" aria-label="Twitter"><TwitterIcon /></a>
+          <a href="#" aria-label="Facebook">
+            <FacebookIcon />
+          </a>
+          <a href="#" aria-label="Instagram">
+            <InstagramIcon />
+          </a>
+          <a href="#" aria-label="Twitter">
+            <TwitterIcon />
+          </a>
         </div>
       </div>
     </footer>
@@ -349,7 +458,9 @@ const Footer = () => {
 };
 
 const HomePage = () => {
-  const { events, venues, artists, loadEvents, loadArtists, loadVenues } = useData();
+  const navigate = useNavigate();
+  const { events, venues, artists, loadEvents, loadArtists, loadVenues } =
+    useData();
 
   console.log(artists);
 
@@ -371,8 +482,13 @@ const HomePage = () => {
       <Hero />
       {/* <CategoryPills /> */}
 
-      <section>
-        <SectionHeader title="Featured Live Events" linkText="View All Events" />
+      <section id="events">
+        <SectionHeader
+          title="Featured Live Events"
+          linkText="View All Events"
+          linkTarget="#events"
+        />
+
         <div className="grid-3">
           {events.map((event) => (
             <EventCard key={event.id} event={event} />
@@ -380,8 +496,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section>
-        <SectionHeader title="Popular Artists" linkText="Explore Artists" />
+      <section id="artists">
+        <SectionHeader
+          title="Popular Artists"
+          linkText="Explore Artists"
+          linkTarget="#artists"
+        />
+
         <div className="artists-row">
           {artists.map((artist) => (
             <ArtistItem key={artist.name} artist={artist} />
@@ -389,8 +510,13 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section>
-        <SectionHeader title="Top Venues" linkText="All Venues" />
+      <section id="venues">
+        <SectionHeader
+          title="Top Venues"
+          linkText="All Venues"
+          onClick={() => navigate("/venues")}
+        />
+
         <div className="grid-3" style={{ paddingBottom: 16 }}>
           {venues.map((venue) => (
             <VenueCard key={venue.name} venue={venue} />
