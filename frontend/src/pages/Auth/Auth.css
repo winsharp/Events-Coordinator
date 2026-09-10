@@ -39,7 +39,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
-  background: #ef4444;
+  background: #9d00ff;
   font-size: 25px;
 }
 
@@ -95,7 +95,7 @@
 }
 
 .account-type-card\:hover {
-  border-color: #ef4444;
+  border-color: #9d00ff;
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
 }
@@ -135,7 +135,7 @@
   padding: 6px 12px;
   border-radius: 20px;
   background: #fef2f2;
-  color: #dc2626;
+  color: #9d00ff;
   font-size: 13px;
   font-weight: 600;
 }
@@ -164,7 +164,7 @@
 }
 
 .form-group input:focus {
-  border-color: #ef4444;
+  border-color: #9d00ff;
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
 }
 
@@ -183,7 +183,7 @@
   transform: translateY(-50%);
   border: none;
   background: transparent;
-  color: #dc2626;
+  color: #9d00ff;
   font-weight: 600;
   cursor: pointer;
 }
@@ -206,7 +206,7 @@
 .forgot-password {
   border: none;
   background: none;
-  color: #dc2626;
+  color: #9d00ff;
   cursor: pointer;
   font-size: 13px;
 }
@@ -228,13 +228,13 @@
 
 .auth-primary-button {
   border: none;
-  background: #ef4444;
+  background: #9d00ff;
   color: white;
   transition: background 0.2s;
 }
 
 .auth-primary-button:hover {
-  background: #dc2626;
+  background: #9d00ff;
 }
 
 .auth-secondary-button {
@@ -253,7 +253,7 @@
   border: 1px solid #fecaca;
   border-radius: 8px;
   background: #fef2f2;
-  color: #b91c1c;
+  color: #9d00ff;
   font-size: 14px;
 }
 
@@ -282,7 +282,7 @@
 }
 
 .existing-account a {
-  color: #dc2626;
+  color: #9d00ff;
   font-weight: 600;
 }
 
