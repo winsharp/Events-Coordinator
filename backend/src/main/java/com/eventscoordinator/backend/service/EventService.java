@@ -7,13 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.eventscoordinator.backend.dto.EventResponse;
+import com.eventscoordinator.backend.dto.VenueResponse;
 import com.eventscoordinator.backend.model.Event;
+import com.eventscoordinator.backend.model.Venue;
 import com.eventscoordinator.backend.repository.EventRepository;
 
 @Service
 public class EventService {
     private final EventRepository eventRepository;
-
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
@@ -32,6 +33,8 @@ public class EventService {
     }
 
     private EventResponse toResponse(Event event) {
-        return new EventResponse(event.getId(), event.getEventDate(), event.getDescription(), event.getTitle());
+        Venue venue = event.getVenue();
+        VenueResponse v = new VenueResponse(venue.getId(), venue.getAccount().getUsername(), venue.getName(), venue.getCity(), venue.getCapacity());
+        return new EventResponse(event.getId(), event.getEventDate(), event.getDescription(), event.getTitle(), v);
     }
 }
