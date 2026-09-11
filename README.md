@@ -8,10 +8,10 @@ The project contains a responsive React and Vite frontend, a Spring Boot REST AP
 
 | Experience | Implemented capabilities |
 |---|---|
-| Public | Event, Artist, and Venue discovery; text, location, and genre filters; details; real minimum tier prices; local artwork; responsive navigation; loading, error, and empty states |
+| Public | Event, Artist, and Venue discovery; text and location filters, plus genre filters for Events and Artists; details, including artist and venue bio pages with their upcoming shows; real minimum tier prices; local artwork; responsive navigation; loading, error, and empty states |
 | Customer | Registration, login, home, profile, order history, digital tickets, quantity and exact-seat selection, five-minute holds, Card/PayPal/USDC demonstration checkout, and ticket transfer |
-| Artist | Profile management, date/location/genre Venue filtering, open-slot selection, booking requests, pending workflow feedback, and profile-owned Event listings |
-| Venue | Analytics ranges, responsive calendar navigation, add/cancel availability, pending booking details, approve/reject decisions, complete profile editing, explicit publish/unpublish state, tiers, and seating inventory |
+| Artist | Profile management, date/location/capacity Venue filtering, open-slot selection, booking requests, pending workflow feedback, profile-owned Event listings, and creating up to four priced ticket tiers (General Admission, VIP, or custom-named) per confirmed Event |
+| Venue | Analytics ranges, responsive calendar navigation, add/cancel availability, pending booking details, approve/reject decisions, profile editing, explicit publish/unpublish state, and seating inventory |
 | Security | BCrypt password hashes, stateless JWT bearer authentication, `@PreAuthorize`, ownership checks, configurable credentialed CORS, validation, and structured error responses |
 | Reliability | Transactional booking and inventory mutation, pessimistic/optimistic locking, idempotent checkout, reservation cleanup, and business-operation logging |
 
@@ -89,13 +89,22 @@ Open `http://localhost:5173`. The highlighted Customer, Artist, and Venue demons
 
 ### 1. Start PostgreSQL
 
-From the project root:
+**With Docker**, from the project root:
 
 ```bash
 docker compose up -d postgres
 ```
 
 The service creates the `ticketgenie` database with the local credentials defined in `docker-compose.yml`.
+
+**Without Docker**, using an existing local PostgreSQL 16+ install, connect with an admin account (e.g. `psql -U postgres`) and run:
+
+```sql
+CREATE ROLE ticketgenie LOGIN PASSWORD 'ticketgenie';
+CREATE DATABASE ticketgenie OWNER ticketgenie;
+```
+
+This creates the same role, password, and database name the backend's defaults expect — no further configuration needed.
 
 ### 2. Start Spring Boot and create the schema
 
@@ -110,13 +119,23 @@ set +a
 
 The Maven Wrapper downloads the required Maven distribution when necessary. The API starts at `http://localhost:8080`, and Hibernate creates or updates the PostgreSQL schema.
 
+> **Windows (PowerShell or cmd, not Git Bash):** `set -a` / `source` are bash syntax and silently do nothing outside a bash shell — skip that block. If the defaults above already match your local PostgreSQL (they will if you followed step 1's non-Docker path), just run `.\mvnw.cmd spring-boot:run`. Only set variables individually first (`$env:DATABASE_PASSWORD = "..."`) if you actually need to override a default.
+
 ### 3. Load demonstration data
 
-After Spring Boot has created the tables, run from the project root:
+After Spring Boot has created the tables, run from the project root.
+
+**With Docker:**
 
 ```bash
 docker compose exec -T postgres \
   psql -U ticketgenie -d ticketgenie < backend/data-population.sql
+```
+
+**Without Docker**, against a local PostgreSQL install:
+
+```bash
+psql -h localhost -U ticketgenie -d ticketgenie -f backend/data-population.sql
 ```
 
 The SQL is PostgreSQL-specific, deterministic, foreign-key ordered, and safe to rerun in a dedicated development database. It truncates only TicketGenie tables, inserts related records, and resets every populated identity sequence.
@@ -154,7 +173,7 @@ All seeded accounts use the password **`TicketGenie1!`**. Login accepts either t
 |---|---|---|---|---|
 | Yes | Customer | `customer.alex` | `alex@ticketgenie.test` | Orders, reservations, issued tickets, and transfer history |
 | Yes | Artist | `artist.neon` | `neon@ticketgenie.test` | Artist profile and confirmed Events |
-| Yes | Venue | `venue.demo` | `venue.demo@ticketgenie.test` | Full Venue profile, publication state, availability, bookings, tiers, and seats |
+| Yes | Venue | `venue.demo` | `venue.demo@ticketgenie.test` | Full Venue profile, publication state, availability, bookings, and seats |
 
 | Additional role | Usernames | Emails |
 |---|---|---|
@@ -164,7 +183,7 @@ All seeded accounts use the password **`TicketGenie1!`**. Login accepts either t
 
 ## Seed Data Scope
 
-The verified PostgreSQL population contains the following connected data. Every public Venue includes contact, website, genres, amenities, and explicit publication fields.
+The verified PostgreSQL population contains the following connected data. Every public Venue includes an address, capacity, description, and explicit publication state; ticket tiers belong to the Artist on each confirmed Event, not to the Venue.
 
 | Entity or state | Seeded data |
 |---|---|
@@ -232,14 +251,14 @@ npm run test:run
 npm run coverage
 ```
 
-The frontend suite contains **414 passing Vitest invocations** covering production DTO adapters, MSW behavior, schemas, formatters, local assets, authentication, role guards, public routes, role dashboards, calendar controls, analytics ranges, booking approval/rejection, reservation switching and expiry, centered seating sections, Venue publication, and checkout redirects.
+The frontend suite contains **413 passing Vitest invocations** covering production DTO adapters, MSW behavior, schemas, formatters, local assets, authentication, role guards, public routes, role dashboards, calendar controls, analytics ranges, booking approval/rejection, reservation switching and expiry, centered seating sections, Venue publication, and checkout redirects.
 
 | Frontend V8 metric | Result | Enforced minimum |
 |---|---:|---:|
-| Statements | 75.33% | 70% |
-| Branches | 61.35% | 60% |
-| Functions | 70.41% | 65% |
-| Lines | 76.72% | 75% |
+| Statements | 74.90% | 70% |
+| Branches | 63.46% | 60% |
+| Functions | 68.94% | 65% |
+| Lines | 76.21% | 75% |
 
 Reports are written to `frontend/test-results.json` and `frontend/coverage/`.
 
@@ -254,10 +273,10 @@ The backend suite contains **348 passing JUnit 5 invocations** covering end-to-e
 
 | Backend JaCoCo metric | Result |
 |---|---:|
-| Instructions | 85.10% |
-| Branches | 55.19% |
+| Instructions | 85.16% |
+| Branches | 55.15% |
 | Lines | 88.49% |
-| Methods | 83.13% |
+| Methods | 83.25% |
 
 JaCoCo writes its HTML report to `backend/target/site/jacoco/index.html`.
 
