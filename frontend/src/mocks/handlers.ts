@@ -33,6 +33,22 @@ export const handlers = [
       : notFound("Event"),
   ),
   http.get("*/tiers", () => ok(fixtureService.tiers())),
+  http.post("*/events/:eventId/tiers", async ({ params, request }) => {
+    const eventId = String(params.eventId);
+    const event = fixtureService.event(eventId);
+    if (!event) return notFound("Event");
+    if (event.tierIds.length >= 4) {
+      return HttpResponse.json(
+        { message: "An event can have at most 4 ticket types" },
+        { status: 400 },
+      );
+    }
+    const tier = fixtureService.addTier(
+      eventId,
+      (await request.json()) as { name: string; price: number; quantity: number },
+    );
+    return tier ? ok(tier, 201) : notFound("Event");
+  }),
   http.get("*/venues", ({ request }) =>
     ok(fixtureService.venues(filtersFrom(new URL(request.url)))),
   ),

@@ -5,6 +5,8 @@ import {
   Button,
   Container,
   Group,
+  Modal,
+  NumberInput,
   Paper,
   Select,
   SimpleGrid,
@@ -24,6 +26,7 @@ import {
   IconCalendarEvent,
   IconMapPin,
   IconMusic,
+  IconPlus,
   IconSearch,
   IconSparkles,
   IconUsers,
@@ -38,6 +41,7 @@ import {
 } from "../components/Cards";
 import { useAuth } from "../context/AppContext";
 import { formatDate } from "../lib/utils";
+import type { Event } from "../types";
 import { genreOptions, locationOptions, supportedGenres } from "../types";
 import { venueImage } from "../lib/assets";
 
@@ -131,6 +135,15 @@ export function ArtistBookingPage() {
         message: "The venue received your booking request.",
       });
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Booking failed",
+        message:
+          err instanceof Error
+            ? err.message
+            : "Save your artist profile before requesting a slot.",
+      }),
   });
   if (venuesQuery.isLoading || slotsQuery.isLoading || artistQuery.isLoading)
     return <FullLoadingState />;
@@ -337,6 +350,144 @@ const SummaryRow = ({ label, value }: { label: string; value: string }) => (
     </Text>
   </Group>
 );
+const TICKET_TYPE_OPTIONS = ["General Admission", "VIP", "Custom Type"];
+const MAX_TIERS_PER_EVENT = 4;
+
+function EventTierManager({ event }: { event: Event }) {
+  const queryClient = useQueryClient();
+  const [opened, setOpened] = useState(false);
+  const [typeChoice, setTypeChoice] = useState(TICKET_TYPE_OPTIONS[0]);
+  const [customName, setCustomName] = useState("");
+  const [price, setPrice] = useState<number | "">(25);
+  const [quantity, setQuantity] = useState<number | "">(100);
+
+  const tiersQuery = useQuery({
+    queryKey: ["tiers", event.id],
+    queryFn: async () => {
+      const all = await api.tiers(event.id);
+      return all.filter((tier) => event.tierIds.includes(tier.id));
+    },
+  });
+  const tiers = tiersQuery.data ?? [];
+  const atLimit = tiers.length >= MAX_TIERS_PER_EVENT;
+
+  const resetForm = () => {
+    setTypeChoice(TICKET_TYPE_OPTIONS[0]);
+    setCustomName("");
+    setPrice(25);
+    setQuantity(100);
+  };
+
+  const addTier = useMutation({
+    mutationFn: () =>
+      api.addTier(event.id, {
+        name: typeChoice === "Custom Type" ? customName.trim() : typeChoice,
+        price: Number(price),
+        quantity: Number(quantity),
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tiers", event.id] });
+      queryClient.invalidateQueries({ queryKey: ["events", "artist"] });
+      notifications.show({ color: "teal", message: "Ticket type added" });
+      setOpened(false);
+      resetForm();
+    },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't add ticket type",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
+  });
+
+  const nameValid =
+    typeChoice !== "Custom Type" || customName.trim().length > 0;
+  const canSubmit =
+    !atLimit && nameValid && Number(price) > 0 && Number(quantity) > 0;
+
+  return (
+    <Paper p="lg" withBorder>
+      <EventCard event={event} />
+      <Group justify="space-between" mt="md">
+        <Text fw={700} size="sm">
+          Ticket types ({tiers.length}/{MAX_TIERS_PER_EVENT})
+        </Text>
+        <Button
+          size="xs"
+          variant="outline"
+          leftSection={<IconPlus size={14} />}
+          disabled={atLimit}
+          onClick={() => setOpened(true)}
+        >
+          Add ticket type
+        </Button>
+      </Group>
+      <Stack mt="sm" gap="xs">
+        {tiers.length ? (
+          tiers.map((tier) => (
+            <Group key={tier.id} justify="space-between">
+              <Text size="sm">{tier.name}</Text>
+              <Text size="sm" c="dimmed">
+                ${tier.price.toFixed(2)} · {tier.inventory} left
+              </Text>
+            </Group>
+          ))
+        ) : (
+          <Text size="sm" c="dimmed">
+            No ticket types yet — add up to {MAX_TIERS_PER_EVENT}.
+          </Text>
+        )}
+      </Stack>
+      <Modal
+        opened={opened}
+        onClose={() => setOpened(false)}
+        title={`Add ticket type — ${event.title}`}
+      >
+        <Stack>
+          <Select
+            label="Ticket type"
+            data={TICKET_TYPE_OPTIONS}
+            value={typeChoice}
+            onChange={(value) =>
+              setTypeChoice(value ?? TICKET_TYPE_OPTIONS[0])
+            }
+          />
+          {typeChoice === "Custom Type" && (
+            <TextInput
+              label="Custom ticket name"
+              value={customName}
+              onChange={(e) => setCustomName(e.currentTarget.value)}
+            />
+          )}
+          <NumberInput
+            label="Price"
+            prefix="$"
+            min={0.01}
+            decimalScale={2}
+            fixedDecimalScale
+            value={price}
+            onChange={(value) => setPrice(value === "" ? "" : Number(value))}
+          />
+          <NumberInput
+            label="Quantity"
+            min={1}
+            value={quantity}
+            onChange={(value) =>
+              setQuantity(value === "" ? "" : Number(value))
+            }
+          />
+          <Button
+            loading={addTier.isPending}
+            disabled={!canSubmit}
+            onClick={() => addTier.mutate()}
+          >
+            Add ticket type
+          </Button>
+        </Stack>
+      </Modal>
+    </Paper>
+  );
+}
 export function ArtistEventsPage() {
   const query = useQuery({
     queryKey: ["events", "artist"],
@@ -361,7 +512,7 @@ export function ArtistEventsPage() {
       {confirmed.length ? (
         <SimpleGrid cols={{ base: 1, md: 2, xl: 3 }}>
           {confirmed.map((event) => (
-            <EventCard event={event} key={event.id} />
+            <EventTierManager event={event} key={event.id} />
           ))}
         </SimpleGrid>
       ) : (

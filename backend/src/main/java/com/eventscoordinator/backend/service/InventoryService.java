@@ -31,19 +31,25 @@ public class InventoryService {
     return tiers.findByEventIdOrderByPriceAsc(eventId).stream().map(mapper::toResponse).toList();
   }
 
-  @PreAuthorize("hasRole('VENUE') and @ownership.venueEvent(#eventId)")
+  private static final int MAX_TIERS_PER_EVENT = 4;
+
+  @PreAuthorize("hasRole('ARTIST') and @ownership.artistEvent(#eventId)")
   @Transactional
   public TierResponse addTier(Long eventId, TierRequest r) {
     Event e = events.findById(eventId).orElseThrow(() -> nf("Event"));
+    if (tiers.findByEventIdOrderByPriceAsc(eventId).size() >= MAX_TIERS_PER_EVENT) {
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "An event can have at most " + MAX_TIERS_PER_EVENT + " ticket types");
+    }
     return mapper.toResponse(tiers.save(new TicketTier(e, r.name(), r.price(), r.quantity())));
   }
 
-  @PreAuthorize("hasRole('VENUE')")
+  @PreAuthorize("hasRole('ARTIST')")
   @Transactional
   public TierResponse updateTier(Long id, TierRequest r) {
     TicketTier t = tiers.findById(id).orElseThrow(() -> nf("Tier"));
-    if (!t.getEvent().getVenue().getAccount().getId().equals(currentId()))
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Venue ownership required");
+    if (!t.getEvent().getArtist().getAccount().getId().equals(currentId()))
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Artist ownership required");
     t.update(r.name(), r.price(), r.quantity());
     return mapper.toResponse(t);
   }

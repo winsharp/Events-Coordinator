@@ -8,6 +8,7 @@ import type {
   RegisterPayload,
   Role,
   SearchFilters,
+  TicketTier,
   User,
 } from "../types";
 import {
@@ -199,6 +200,27 @@ export const fixtureService = {
       delete slot.title;
     }
     return slot;
+  },
+  addTier: (
+    eventId: string,
+    values: { name: string; price: number; quantity: number },
+  ) => {
+    const event = database.events.find((candidate) => candidate.id === eventId);
+    if (!event) return undefined;
+    const tier: TicketTier = {
+      id: randomId("tier"),
+      name: values.name,
+      description: `${values.quantity} tickets available`,
+      price: values.price,
+      inventory: values.quantity,
+      color: "#7c3aed",
+    };
+    database.tiers.push(tier);
+    event.tierIds.push(tier.id);
+    event.priceFrom = event.tierIds.length === 1
+      ? tier.price
+      : Math.min(event.priceFrom, tier.price);
+    return tier;
   },
   saveArtistProfile: (values: Record<string, unknown>) => {
     const artist = fixtureService.myArtist();

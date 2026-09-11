@@ -37,4 +37,11 @@ public class Ownership {
         .map(e -> e.getVenue().getAccount().getId().equals(id()))
         .orElse(false);
   }
+
+  public boolean artistEvent(Long eventId) {
+    return events
+        .findById(eventId)
+        .map(e -> e.getArtist().getAccount().getId().equals(id()))
+        .orElse(false);
+  }
 }

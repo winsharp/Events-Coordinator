@@ -435,6 +435,19 @@ export const api = {
     usesStandaloneApi
       ? unwrap<TicketTier[]>(apiClient.get("/tiers"))
       : springTiers(eventId),
+  addTier: async (
+    eventId: string,
+    values: { name: string; price: number; quantity: number },
+  ) => {
+    if (usesStandaloneApi)
+      return unwrap<TicketTier>(
+        apiClient.post(`/events/${eventId}/tiers`, values),
+      );
+    const tier = await unwrap<SpringTier>(
+      apiClient.post(`/events/${eventId}/tiers`, values),
+    );
+    return tierToUi(tier);
+  },
   venues: async (filters: SearchFilters = {}) => {
     if (usesStandaloneApi)
       return unwrap<Venue[]>(apiClient.get(`/venues?${queryString(filters)}`));
