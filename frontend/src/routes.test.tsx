@@ -28,7 +28,7 @@ describe("application route smoke coverage", () => {
     expect(
       screen.getByText("Find your next unforgettable night"),
     ).toBeInTheDocument();
-    expect(await screen.findByText("Trending near you")).toBeInTheDocument();
+    expect(await screen.findByText("Trending")).toBeInTheDocument();
   });
 
   it("renders event browse", async () => {

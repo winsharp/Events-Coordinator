@@ -195,7 +195,7 @@ export function HomePage() {
           <Group justify="space-between" mb="lg">
             <Box>
               <Text className="section-kicker">CURATED NOW</Text>
-              <Title order={2}>Trending near you</Title>
+              <Title order={2}>Trending</Title>
             </Box>
             <Button
               component={Link}

@@ -1380,7 +1380,7 @@ export const secureMessages = [
   "No real funds are transferred.",
 ];
 export const discoverSections = [
-  "Trending near you",
+  "Trending",
   "Browse by genre",
   "Popular venues",
   "Artists to watch",
