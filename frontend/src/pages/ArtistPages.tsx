@@ -551,6 +551,12 @@ export function ArtistProfilePage() {
       queryClient.setQueryData(["artist", "me"], artist);
       notifications.show({ color: "teal", message: "Artist profile updated" });
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't save the artist profile",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
   });
   if (artistQuery.isLoading) return <FullLoadingState />;
   const field = <K extends keyof ArtistForm>(key: K, value: ArtistForm[K]) =>

@@ -518,6 +518,12 @@ function UsdcPanel({
         onComplete(confirmed);
       }
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't confirm the USDC payment",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
   });
   useEffect(() => {
     const interval = window.setInterval(

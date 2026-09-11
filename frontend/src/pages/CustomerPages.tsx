@@ -328,6 +328,12 @@ export function CustomerProfilePage() {
         message: "Customer profile updated",
       });
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't save your profile",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
   });
   const field = <K extends keyof CustomerForm>(key: K, value: CustomerForm[K]) =>
     setValues((current) => ({ ...current, [key]: value }));

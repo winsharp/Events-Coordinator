@@ -3,7 +3,6 @@ import {
   Badge,
   Box,
   Button,
-  Checkbox,
   Container,
   Group,
   Modal,
@@ -230,6 +229,15 @@ export function VenueAvailabilityPage() {
       setSelectedDate(date);
       close();
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't publish availability",
+        message:
+          err instanceof Error
+            ? err.message
+            : "Save your venue profile before publishing availability.",
+      }),
   });
   const params = new URLSearchParams(window.location.search);
   useEffect(() => {
@@ -377,7 +385,9 @@ export function VenueAvailabilityPage() {
           <TextInput
             type="date"
             label="Date"
+            min={todayKey()}
             value={date}
+            error={date < todayKey() ? "Pick a date that hasn't passed yet" : undefined}
             onChange={(e) => setDate(e.currentTarget.value)}
           />
           <Group grow>
@@ -394,7 +404,9 @@ export function VenueAvailabilityPage() {
           </Group>
           <Button
             loading={mutation.isPending}
-            disabled={!date || !start || !end || start === end}
+            disabled={
+              !date || !start || !end || start === end || date < todayKey()
+            }
             onClick={() => mutation.mutate()}
           >
             Publish slot
@@ -424,6 +436,12 @@ export function VenueBookingsPage() {
       });
       setSelected(null);
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't update the booking",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
   });
   if (query.isLoading) return <FullLoadingState />;
   const bookings = query.data ?? [];
@@ -584,6 +602,12 @@ export function VenueProfilePage() {
           : "The profile remains unpublished.",
       });
     },
+    onError: (err: unknown) =>
+      notifications.show({
+        color: "red",
+        title: "Couldn't save the venue profile",
+        message: err instanceof Error ? err.message : "Please try again.",
+      }),
   });
   if (venueQuery.isLoading) return <FullLoadingState />;
   const field = <K extends keyof VenueForm>(key: K, value: VenueForm[K]) =>
@@ -645,11 +669,6 @@ export function VenueProfilePage() {
               value={values.description}
               onChange={(e) => field("description", e.currentTarget.value)}
             />
-            <Checkbox
-              label="I confirm this information is ready for public display"
-              checked={values.published}
-              onChange={(e) => field("published", e.currentTarget.checked)}
-            />
             <Button
               loading={mutation.isPending}
               onClick={() => mutation.mutate(values)}
@@ -659,6 +678,7 @@ export function VenueProfilePage() {
             <Button
               variant="outline"
               color={values.published ? "red" : "violet"}
+              loading={mutation.isPending}
               onClick={() =>
                 mutation.mutate({ ...values, published: !values.published })
               }
