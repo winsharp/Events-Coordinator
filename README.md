@@ -72,6 +72,8 @@ All payment paths are intentionally non-production. Card and PayPal complete imm
 | PostgreSQL option | Docker with Docker Compose, Podman-compatible Compose, or an existing PostgreSQL 16-compatible server |
 | H2 option | No external database process is required; H2 is included as a runtime dependency for the `h2` profile |
 
+> **Windows:** every `./mvnw ...` command in this guide is `.\mvnw.cmd ...` in PowerShell or cmd (`./mvnw` itself won't run outside a bash shell like Git Bash or WSL).
+
 ## Quick Start: Standalone Frontend
 
 The standalone mode uses MSW and does not require Java or a database.
@@ -119,7 +121,7 @@ set +a
 
 The Maven Wrapper downloads the required Maven distribution when necessary. The API starts at `http://localhost:8080`, and Hibernate creates or updates the PostgreSQL schema.
 
-> **Windows (PowerShell or cmd, not Git Bash):** `set -a` / `source` are bash syntax and silently do nothing outside a bash shell — skip that block. If the defaults above already match your local PostgreSQL (they will if you followed step 1's non-Docker path), just run `.\mvnw.cmd spring-boot:run`. Only set variables individually first (`$env:DATABASE_PASSWORD = "..."`) if you actually need to override a default.
+> **Windows (PowerShell or cmd, not Git Bash):** `set -a` / `source` are bash syntax and silently do nothing outside a bash shell — skip that block. If the defaults above already match your local PostgreSQL (they will if you followed step 1's non-Docker path), just run the wrapper directly. Only set variables individually first (`$env:DATABASE_PASSWORD = "..."`) if you actually need to override a default.
 
 ### 3. Load demonstration data
 
