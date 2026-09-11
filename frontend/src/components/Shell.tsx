@@ -37,6 +37,7 @@ import {
 import { copyright, footerGroups } from "../types";
 import { initials } from "../lib/utils";
 import { useAuth } from "../context/AppContext";
+import { api } from "../api/client";
 
 const publicLinks = [
   ["Discover", "/"],
@@ -152,11 +153,18 @@ export function Header() {
             leftSection={<IconSearch size={17} />}
             placeholder="Search artists, events or venues"
             aria-label="Search TicketGenie"
-            onKeyDown={(event) => {
-              if (event.key === "Enter")
-                navigate(
-                  `/events?query=${encodeURIComponent(event.currentTarget.value)}`,
-                );
+            onKeyDown={async (event) => {
+              if (event.key !== "Enter") return;
+              const query = event.currentTarget.value.trim();
+              if (!query) return;
+              const [venues, artists] = await Promise.all([
+                api.venues({ query }).catch(() => []),
+                api.artists({ query }).catch(() => []),
+              ]);
+              const encoded = encodeURIComponent(query);
+              if (venues.length) navigate(`/venues?query=${encoded}`);
+              else if (artists.length) navigate(`/artists?query=${encoded}`);
+              else navigate(`/events?query=${encoded}`);
             }}
           />
           <Group gap="xl" visibleFrom="lg">
