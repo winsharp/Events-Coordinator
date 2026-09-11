@@ -13,16 +13,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
   @Query("select a from Account a where a.id = :id")
   Optional<Account> findLocked(@Param("id") Long id);
 
-  Optional<Account> findByUsernameIgnoreCase(String username);
-
   Optional<Account> findByEmailIgnoreCase(String email);
-
-  @Query(
-      "select a from Account a where lower(a.username) = lower(:identifier) or lower(a.email) ="
-          + " lower(:identifier)")
-  Optional<Account> findByUsernameOrEmail(@Param("identifier") String identifier);
-
-  boolean existsByUsernameIgnoreCase(String username);
 
   boolean existsByEmailIgnoreCase(String email);
 }

@@ -1,25 +1,25 @@
 -- TicketGenie demo data. All demo accounts use password TicketGenie1!.
 BEGIN;
 TRUNCATE TABLE issued_tickets, purchase_orders, reservations, seats, ticket_tiers, events, availability_slots, venues, artists, accounts RESTART IDENTITY CASCADE;
-INSERT INTO accounts (id,version,username,email,password_hash,first_name,last_name,role,created_at) VALUES
-(1,0,'customer.demo','customer.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Casey','Morgan','CUSTOMER','2026-01-01T10:00:00Z'),
-(2,0,'customer.alex','alex@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Alex','Rivera','CUSTOMER','2026-01-01T10:00:00Z'),
-(3,0,'customer.jordan','jordan@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Jordan','Lee','CUSTOMER','2026-01-01T10:00:00Z'),
-(4,0,'artist.demo','artist.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Avery','Stone','ARTIST','2026-01-01T10:00:00Z'),
-(5,0,'artist.neon','neon@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Nina','Hart','ARTIST','2026-01-01T10:00:00Z'),
-(6,0,'artist.jazz','jazz@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Miles','Reed','ARTIST','2026-01-01T10:00:00Z'),
-(7,0,'venue.demo','venue.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Taylor','Brooks','VENUE','2026-01-01T10:00:00Z'),
-(8,0,'venue.harbor','harbor@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Robin','Chen','VENUE','2026-01-01T10:00:00Z'),
-(9,0,'venue.garden','garden@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Sam','Patel','VENUE','2026-01-01T10:00:00Z'),
-(10,0,'customer.riley','riley@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Riley','Nguyen','CUSTOMER','2026-01-01T10:00:00Z'),
-(11,0,'customer.morgan','morgan@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Morgan','Diaz','CUSTOMER','2026-01-01T10:00:00Z'),
-(12,0,'customer.sky','sky@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Sky','Wilson','CUSTOMER','2026-01-01T10:00:00Z'),
-(13,0,'artist.folk','folk@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','June','Bell','ARTIST','2026-01-01T10:00:00Z'),
-(14,0,'artist.pulse','pulse@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Kai','Young','ARTIST','2026-01-01T10:00:00Z'),
-(15,0,'artist.classical','classical@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Elena','Park','ARTIST','2026-01-01T10:00:00Z'),
-(16,0,'venue.riverside','riverside@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Drew','King','VENUE','2026-01-01T10:00:00Z'),
-(17,0,'venue.loft','loft@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Quinn','Baker','VENUE','2026-01-01T10:00:00Z'),
-(18,0,'venue.opera','opera@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Parker','Evans','VENUE','2026-01-01T10:00:00Z');
+INSERT INTO accounts (id,version,email,password_hash,first_name,last_name,role,created_at) VALUES
+(1,0,'customer.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Casey','Morgan','CUSTOMER','2026-01-01T10:00:00Z'),
+(2,0,'alex@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Alex','Rivera','CUSTOMER','2026-01-01T10:00:00Z'),
+(3,0,'jordan@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Jordan','Lee','CUSTOMER','2026-01-01T10:00:00Z'),
+(4,0,'artist.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Avery','Stone','ARTIST','2026-01-01T10:00:00Z'),
+(5,0,'neon@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Nina','Hart','ARTIST','2026-01-01T10:00:00Z'),
+(6,0,'jazz@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Miles','Reed','ARTIST','2026-01-01T10:00:00Z'),
+(7,0,'venue.demo@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Taylor','Brooks','VENUE','2026-01-01T10:00:00Z'),
+(8,0,'harbor@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Robin','Chen','VENUE','2026-01-01T10:00:00Z'),
+(9,0,'garden@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Sam','Patel','VENUE','2026-01-01T10:00:00Z'),
+(10,0,'riley@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Riley','Nguyen','CUSTOMER','2026-01-01T10:00:00Z'),
+(11,0,'morgan@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Morgan','Diaz','CUSTOMER','2026-01-01T10:00:00Z'),
+(12,0,'sky@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Sky','Wilson','CUSTOMER','2026-01-01T10:00:00Z'),
+(13,0,'folk@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','June','Bell','ARTIST','2026-01-01T10:00:00Z'),
+(14,0,'pulse@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Kai','Young','ARTIST','2026-01-01T10:00:00Z'),
+(15,0,'classical@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Elena','Park','ARTIST','2026-01-01T10:00:00Z'),
+(16,0,'riverside@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Drew','King','VENUE','2026-01-01T10:00:00Z'),
+(17,0,'loft@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Quinn','Baker','VENUE','2026-01-01T10:00:00Z'),
+(18,0,'opera@ticketgenie.test','$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2','Parker','Evans','VENUE','2026-01-01T10:00:00Z');
 INSERT INTO artists (id,version,account_id,stage_name,genre,bio) VALUES
 (1,0,4,'The Comets','Indie Rock','Anthemic guitars and bright harmonies.'),
 (2,0,5,'Neon Current','Electronic','Live electronic sets with analog synths.'),

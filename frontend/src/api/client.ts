@@ -66,7 +66,6 @@ const regionFor = (city: string) => regionByCity[city] ?? "";
 
 interface SpringAccount {
   id: number;
-  username: string;
   email: string;
   firstName: string;
   lastName: string;
@@ -104,7 +103,6 @@ export interface SpringTier {
 export interface SpringVenue {
   id: number;
   accountId: number;
-  username: string;
   name: string;
   address: string;
   city: string;
@@ -116,7 +114,6 @@ export interface SpringVenue {
 export interface SpringArtist {
   id: number;
   accountId: number;
-  username: string;
   stageName: string;
   genre: string;
   bio: string;
@@ -169,7 +166,7 @@ interface SpringTicket {
   tierName: string;
   seatLabel?: string;
   ownerId: number;
-  ownerUsername: string;
+  ownerEmail: string;
   status: string;
 }
 
@@ -580,7 +577,7 @@ export const api = {
     return storeAuth(
       await unwrap<SpringAuthResponse>(
         apiClient.post("/auth/login", {
-          username: payload.email,
+          email: payload.email,
           password: payload.password,
         }),
       ),
@@ -592,7 +589,6 @@ export const api = {
     return storeAuth(
       await unwrap<SpringAuthResponse>(
         apiClient.post("/auth/register", {
-          username: payload.username,
           email: payload.email,
           password: payload.password,
           role: payload.role,

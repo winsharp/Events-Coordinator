@@ -40,9 +40,6 @@ public class AuthService {
 
   @Transactional
   public AuthResponse register(RegisterRequest request) {
-    if (accounts.existsByUsernameIgnoreCase(request.username())) {
-      throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already registered");
-    }
     if (accounts.existsByEmailIgnoreCase(request.email())) {
       throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");
     }
@@ -50,7 +47,6 @@ public class AuthService {
     Account account =
         accounts.save(
             new Account(
-                request.username().trim(),
                 request.email().trim().toLowerCase(),
                 passwords.encode(request.password()),
                 request.firstName().trim(),
@@ -62,18 +58,18 @@ public class AuthService {
   public AuthResponse login(LoginRequest request) {
     try {
       authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+          new UsernamePasswordAuthenticationToken(request.email(), request.password()));
     } catch (AuthenticationException exception) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password");
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
     }
 
     Account account =
         accounts
-            .findByUsernameOrEmail(request.username())
+            .findByEmailIgnoreCase(request.email())
             .orElseThrow(
                 () ->
                     new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Invalid username or password"));
+                        HttpStatus.UNAUTHORIZED, "Invalid email or password"));
     return response(account);
   }
 

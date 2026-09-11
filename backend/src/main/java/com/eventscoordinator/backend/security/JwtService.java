@@ -24,7 +24,7 @@ public class JwtService {
   public String generate(AccountPrincipal p) {
     Instant now = Instant.now();
     return Jwts.builder()
-        .subject(p.username())
+        .subject(p.email())
         .claim("accountId", p.id())
         .claim("role", p.role().name())
         .issuedAt(Date.from(now))
@@ -33,13 +33,13 @@ public class JwtService {
         .compact();
   }
 
-  public String username(String token) {
+  public String email(String token) {
     return claims(token).getSubject();
   }
 
   public boolean valid(String token, UserDetails u) {
     try {
-      return username(token).equalsIgnoreCase(u.getUsername())
+      return email(token).equalsIgnoreCase(u.getUsername())
           && claims(token).getExpiration().after(new Date());
     } catch (JwtException | IllegalArgumentException e) {
       return false;

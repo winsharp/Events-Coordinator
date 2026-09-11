@@ -37,7 +37,7 @@ public interface CommerceMapper {
   @Mapping(target = "seatId", source = "seat.id")
   @Mapping(target = "seatLabel", expression = "java(seatLabel(t.getSeat()))")
   @Mapping(target = "ownerId", source = "owner.id")
-  @Mapping(target = "ownerUsername", source = "owner.username")
+  @Mapping(target = "ownerEmail", source = "owner.email")
   TicketResponse toResponse(IssuedTicket t);
 
   default String seatLabel(Seat s) {

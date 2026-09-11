@@ -19,21 +19,21 @@ class SeedDataTest {
 
   static Stream<String> users() {
     return Stream.of(
-        "customer.demo",
-        "customer.alex",
-        "customer.jordan",
-        "artist.demo",
-        "artist.neon",
-        "artist.jazz",
-        "venue.demo",
-        "venue.harbor",
-        "venue.garden");
+        "customer.demo@ticketgenie.test",
+        "alex@ticketgenie.test",
+        "jordan@ticketgenie.test",
+        "artist.demo@ticketgenie.test",
+        "neon@ticketgenie.test",
+        "jazz@ticketgenie.test",
+        "venue.demo@ticketgenie.test",
+        "harbor@ticketgenie.test",
+        "garden@ticketgenie.test");
   }
 
   @ParameterizedTest
   @MethodSource("users")
-  void everyDocumentedAccountHasUsableBcryptHash(String user) {
-    assertThat(sql).contains("'" + user + "'");
+  void everyDocumentedAccountHasUsableBcryptHash(String email) {
+    assertThat(sql).contains("'" + email + "'");
     String hash = "$2a$10$CXhfna/erEzIeERFptp7EeAGhi2eKxTkJdJHVNoCCdDaXmBumu1K2";
     assertThat(sql).contains(hash);
     assertThat(new BCryptPasswordEncoder().matches("TicketGenie1!", hash)).isTrue();

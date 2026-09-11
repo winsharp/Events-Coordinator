@@ -80,14 +80,14 @@ describe("application route smoke coverage", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders registration with username and role selection", () => {
+  it("renders registration with role selection", () => {
     renderApp(<App />, { route: "/register" });
     expect(
       screen.getByRole("heading", {
         name: "Create your TicketGenie account",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("Username")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toBeInTheDocument();
   });
 
   it("redirects a protected customer route when anonymous", async () => {

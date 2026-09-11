@@ -9,14 +9,12 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface ProfileMapper {
   @Mapping(target = "accountId", source = "account.id")
-  @Mapping(target = "username", source = "account.username")
   ArtistResponse toResponse(Artist a);
 
   default VenueResponse toResponse(Venue venue) {
     return new VenueResponse(
         venue.getId(),
         venue.getAccount().getId(),
-        venue.getAccount().getUsername(),
         venue.getName(),
         venue.getAddress(),
         venue.getCity(),

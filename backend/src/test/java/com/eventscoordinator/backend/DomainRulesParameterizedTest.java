@@ -68,19 +68,19 @@ class DomainRulesParameterizedTest {
   static Stream<Arguments> jwtUsers() {
     Role[] roles = Role.values();
     return IntStream.range(0, 45)
-        .mapToObj(i -> Arguments.of("user" + i, roles[i % roles.length], (long) i + 1));
+        .mapToObj(i -> Arguments.of("user" + i + "@example.test", roles[i % roles.length], (long) i + 1));
   }
 
   @ParameterizedTest(name = "jwt {0} {1}")
   @MethodSource("jwtUsers")
-  void jwtRoundTripAuthenticates(String username, Role role, long id) {
+  void jwtRoundTripAuthenticates(String email, Role role, long id) {
     JwtService jwt =
         new JwtService(
             "VGVzdC1zZWNyZXQta2V5LW11c3QtYmUtYXQtbGVhc3QtMzItYnl0ZXMtbG9uZy0yMDI2", 60000);
-    AccountPrincipal p = new AccountPrincipal(id, username, "hash", role);
+    AccountPrincipal p = new AccountPrincipal(id, email, "hash", role);
     String token = jwt.generate(p);
     assertThat(token.split("\\.")).hasSize(3);
-    assertThat(jwt.username(token)).isEqualTo(username);
+    assertThat(jwt.email(token)).isEqualTo(email);
     assertThat(jwt.valid(token, p)).isTrue();
     assertThat(p.getAuthorities()).extracting(Object::toString).containsExactly("ROLE_" + role);
   }
@@ -97,7 +97,7 @@ class DomainRulesParameterizedTest {
           f.getValidator()
               .validate(
                   new RegisterRequest(
-                      "validuser", "valid@example.test", password, Role.CUSTOMER, "First", "Last"));
+                      "valid@example.test", password, Role.CUSTOMER, "First", "Last"));
       boolean passwordViolation =
           violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("password"));
       assertThat(passwordViolation).isEqualTo(!expectedValid);

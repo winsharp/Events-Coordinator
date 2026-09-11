@@ -75,7 +75,6 @@ describe("centralized API client with MSW", () => {
     expect(
       (
         await api.register({
-          username: "sam.river",
           firstName: "Sam",
           lastName: "River",
           email: "sam@example.com",
@@ -163,7 +162,6 @@ describe("Spring REST response adapters", () => {
         {
           id: 7,
           accountId: 4,
-          username: "artist.comets",
           stageName: "The Comets",
           genre: "Indie Rock",
           bio: "Anthemic guitars",
@@ -182,7 +180,6 @@ describe("Spring REST response adapters", () => {
       mapSpringVenueForUi({
         id: 9,
         accountId: 3,
-        username: "venue.atlas",
         name: "Atlas Hall",
         address: "100 Market Street",
         city: "Austin",

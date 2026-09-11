@@ -81,7 +81,7 @@ public final class CommerceDtos {
       Long seatId,
       String seatLabel,
       Long ownerId,
-      String ownerUsername,
+      String ownerEmail,
       TicketStatus status,
       Instant issuedAt) {}
 

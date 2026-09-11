@@ -120,7 +120,6 @@ export interface AuthPayload {
 }
 
 export interface RegisterPayload extends AuthPayload {
-  username: string;
   firstName: string;
   lastName: string;
   confirmPassword: string;
@@ -1655,7 +1654,6 @@ export const sampleAuth: AuthPayload = {
 };
 export const sampleRegister: RegisterPayload = {
   ...sampleAuth,
-  username: "alex.rivera",
   firstName: "Alex",
   lastName: "Johnson",
   confirmPassword: demoPassword,

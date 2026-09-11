@@ -6,10 +6,10 @@ import org.springframework.security.core.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public record AccountPrincipal(Long id, String username, String password, Role role)
+public record AccountPrincipal(Long id, String email, String password, Role role)
     implements UserDetails {
   public static AccountPrincipal from(Account a) {
-    return new AccountPrincipal(a.getId(), a.getUsername(), a.getPasswordHash(), a.getRole());
+    return new AccountPrincipal(a.getId(), a.getEmail(), a.getPasswordHash(), a.getRole());
   }
 
   public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -21,6 +21,6 @@ public record AccountPrincipal(Long id, String username, String password, Role r
   }
 
   public String getUsername() {
-    return username;
+    return email;
   }
 }

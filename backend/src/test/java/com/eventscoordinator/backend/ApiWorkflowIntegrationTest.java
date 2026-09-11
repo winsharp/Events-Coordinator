@@ -45,14 +45,12 @@ class ApiWorkflowIntegrationTest {
     return json.readTree(s);
   }
 
-  String register(String username, String email, String role) throws Exception {
+  String register(String email, String role) throws Exception {
     return node(call(
             "POST",
             "/api/auth/register",
             null,
-            "{\"username\":\""
-                + username
-                + "\",\"email\":\""
+            "{\"email\":\""
                 + email
                 + "\",\"password\":\"StrongPass1!\",\"role\":\""
                 + role
@@ -64,12 +62,12 @@ class ApiWorkflowIntegrationTest {
 
   @Test
   void completeVenueArtistCustomerWorkflow() throws Exception {
-    String venue = register("venueflow", "venueflow@test.dev", "VENUE"),
-        artist = register("artistflow", "artistflow@test.dev", "ARTIST"),
-        customer = register("customerflow", "customerflow@test.dev", "CUSTOMER"),
-        recipient = register("recipientflow", "recipientflow@test.dev", "CUSTOMER");
-    assertThat(node(call("GET", "/api/auth/me", customer, null, 200)).get("username").asText())
-        .isEqualTo("customerflow");
+    String venue = register("venueflow@test.dev", "VENUE"),
+        artist = register("artistflow@test.dev", "ARTIST"),
+        customer = register("customerflow@test.dev", "CUSTOMER"),
+        recipient = register("recipientflow@test.dev", "CUSTOMER");
+    assertThat(node(call("GET", "/api/auth/me", customer, null, 200)).get("email").asText())
+        .isEqualTo("customerflow@test.dev");
     assertThat(
             node(call(
                     "PUT",
@@ -243,7 +241,7 @@ class ApiWorkflowIntegrationTest {
                 customer,
                 "{\"recipientEmail\":\"recipientflow@test.dev\"}",
                 200));
-    assertThat(transferred.get("ownerUsername").asText()).isEqualTo("recipientflow");
+    assertThat(transferred.get("ownerEmail").asText()).isEqualTo("recipientflow@test.dev");
     assertThat(node(call("GET", "/api/tickets", recipient, null, 200))).hasSize(1);
     long usdcReservation =
         node(call(
@@ -334,15 +332,15 @@ class ApiWorkflowIntegrationTest {
             post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
-                    "{\"username\":\"x\",\"email\":\"bad\",\"password\":\"tiny\",\"role\":\"CUSTOMER\",\"firstName\":\"\",\"lastName\":\"\"}"))
+                    "{\"email\":\"bad\",\"password\":\"tiny\",\"role\":\"CUSTOMER\",\"firstName\":\"\",\"lastName\":\"\"}"))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.errors").exists());
     mvc.perform(
             post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"username\":\"missing\",\"password\":\"wrongpass\"}"))
+                .content("{\"email\":\"missing@test.dev\",\"password\":\"wrongpass\"}"))
         .andExpect(status().isUnauthorized())
-        .andExpect(jsonPath("$.detail").value("Invalid username or password"));
+        .andExpect(jsonPath("$.detail").value("Invalid email or password"));
   }
 
   @ParameterizedTest
@@ -383,9 +381,9 @@ class ApiWorkflowIntegrationTest {
 
   @Test
   void venueCanRejectBookingWhileOtherVenueCannotDecideIt() throws Exception {
-    String venue = register("venuereject", "venuereject@test.dev", "VENUE");
-    String otherVenue = register("venueother", "venueother@test.dev", "VENUE");
-    String artist = register("artistreject", "artistreject@test.dev", "ARTIST");
+    String venue = register("venuereject@test.dev", "VENUE");
+    String otherVenue = register("venueother@test.dev", "VENUE");
+    String artist = register("artistreject@test.dev", "ARTIST");
     MvcResult publication =
         mvc.perform(
                 post("/api/venues")
@@ -456,7 +454,7 @@ class ApiWorkflowIntegrationTest {
 
   @Test
   void venueProfileFieldsAndPublicationStateArePersisted() throws Exception {
-    String venue = register("venueprofile", "venueprofile@test.dev", "VENUE");
+    String venue = register("venueprofile@test.dev", "VENUE");
     String profile =
         "{\"name\":\"Profile Hall\",\"address\":\"50 Music Way\",\"city\":\"Austin\","
             + "\"capacity\":850,\"description\":\"Flexible independent venue\","

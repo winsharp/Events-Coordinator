@@ -127,7 +127,6 @@ describe("authentication and checkout schemas", () => {
   it("accepts a strong registration", () =>
     expect(
       registerSchema.safeParse({
-        username: "sam.river",
         firstName: "Sam",
         lastName: "River",
         email: "sam@example.com",
@@ -140,7 +139,6 @@ describe("authentication and checkout schemas", () => {
   it("rejects mismatched registration passwords", () =>
     expect(
       registerSchema.safeParse({
-        username: "sam.river",
         firstName: "Sam",
         lastName: "River",
         email: "sam@example.com",

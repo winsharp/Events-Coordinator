@@ -12,7 +12,7 @@ public final class ProfileDtos {
       @Size(max = 2000) String bio) {}
 
   public record ArtistResponse(
-      Long id, Long accountId, String username, String stageName, String genre, String bio) {}
+      Long id, Long accountId, String stageName, String genre, String bio) {}
 
   public record VenueRequest(
       @NotBlank @Size(max = 150) String name,
@@ -29,7 +29,6 @@ public final class ProfileDtos {
   public record VenueResponse(
       Long id,
       Long accountId,
-      String username,
       String name,
       String address,
       String city,

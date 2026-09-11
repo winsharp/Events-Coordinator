@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         && SecurityContextHolder.getContext().getAuthentication() == null) {
       String token = h.substring(7);
       try {
-        UserDetails u = details.loadUserByUsername(jwt.username(token));
+        UserDetails u = details.loadUserByUsername(jwt.email(token));
         if (jwt.valid(token, u)) {
           var a = new UsernamePasswordAuthenticationToken(u, null, u.getAuthorities());
           a.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));

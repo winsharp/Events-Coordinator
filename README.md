@@ -169,19 +169,19 @@ To reset local H2 development data, stop Spring Boot and delete `backend/data/`.
 
 ## Demonstration Accounts
 
-All seeded accounts use the password **`TicketGenie1!`**. Login accepts either the username or email. Passwords are stored as BCrypt hashes rather than plaintext.
+All seeded accounts use the password **`TicketGenie1!`**. Accounts are identified by email only — there is no username. Passwords are stored as BCrypt hashes rather than plaintext.
 
-| Default UI account | Role | Username | Email | Related records |
-|---|---|---|---|---|
-| Yes | Customer | `customer.alex` | `alex@ticketgenie.test` | Orders, reservations, issued tickets, and transfer history |
-| Yes | Artist | `artist.neon` | `neon@ticketgenie.test` | Artist profile and confirmed Events |
-| Yes | Venue | `venue.demo` | `venue.demo@ticketgenie.test` | Full Venue profile, publication state, availability, bookings, and seats |
+| Default UI account | Role | Email | Related records |
+|---|---|---|---|
+| Yes | Customer | `alex@ticketgenie.test` | Orders, reservations, issued tickets, and transfer history |
+| Yes | Artist | `neon@ticketgenie.test` | Artist profile and confirmed Events |
+| Yes | Venue | `venue.demo@ticketgenie.test` | Full Venue profile, publication state, availability, bookings, and seats |
 
-| Additional role | Usernames | Emails |
-|---|---|---|
-| Customers | `customer.demo`, `customer.jordan`, `customer.riley`, `customer.morgan`, `customer.sky` | `customer.demo@ticketgenie.test`, `jordan@ticketgenie.test`, `riley@ticketgenie.test`, `morgan@ticketgenie.test`, `sky@ticketgenie.test` |
-| Artists | `artist.demo`, `artist.jazz`, `artist.folk`, `artist.pulse`, `artist.classical` | `artist.demo@ticketgenie.test`, `jazz@ticketgenie.test`, `folk@ticketgenie.test`, `pulse@ticketgenie.test`, `classical@ticketgenie.test` |
-| Venues | `venue.harbor`, `venue.garden`, `venue.riverside`, `venue.loft`, `venue.opera` | `harbor@ticketgenie.test`, `garden@ticketgenie.test`, `riverside@ticketgenie.test`, `loft@ticketgenie.test`, `opera@ticketgenie.test` |
+| Additional role | Emails |
+|---|---|
+| Customers | `customer.demo@ticketgenie.test`, `jordan@ticketgenie.test`, `riley@ticketgenie.test`, `morgan@ticketgenie.test`, `sky@ticketgenie.test` |
+| Artists | `artist.demo@ticketgenie.test`, `jazz@ticketgenie.test`, `folk@ticketgenie.test`, `pulse@ticketgenie.test`, `classical@ticketgenie.test` |
+| Venues | `harbor@ticketgenie.test`, `garden@ticketgenie.test`, `riverside@ticketgenie.test`, `loft@ticketgenie.test`, `opera@ticketgenie.test` |
 
 ## Seed Data Scope
 
@@ -275,10 +275,10 @@ The backend suite contains **348 passing JUnit 5 invocations** covering end-to-e
 
 | Backend JaCoCo metric | Result |
 |---|---:|
-| Instructions | 85.16% |
-| Branches | 55.15% |
-| Lines | 88.49% |
-| Methods | 83.25% |
+| Instructions | 85.41% |
+| Branches | 55.22% |
+| Lines | 88.47% |
+| Methods | 83.17% |
 
 JaCoCo writes its HTML report to `backend/target/site/jacoco/index.html`.
 

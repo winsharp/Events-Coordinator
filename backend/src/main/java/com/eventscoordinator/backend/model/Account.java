@@ -7,7 +7,6 @@ import java.time.Instant;
 @Table(
     name = "accounts",
     uniqueConstraints = {
-      @UniqueConstraint(name = "uk_account_username", columnNames = "username"),
       @UniqueConstraint(name = "uk_account_email", columnNames = "email")
     })
 public class Account {
@@ -16,9 +15,6 @@ public class Account {
   private Long id;
 
   @Version private long version;
-
-  @Column(nullable = false, length = 50)
-  private String username;
 
   @Column(nullable = false, length = 180)
   private String email;
@@ -42,13 +38,7 @@ public class Account {
   protected Account() {}
 
   public Account(
-      String username,
-      String email,
-      String passwordHash,
-      String firstName,
-      String lastName,
-      Role role) {
-    this.username = username;
+      String email, String passwordHash, String firstName, String lastName, Role role) {
     this.email = email;
     this.passwordHash = passwordHash;
     this.firstName = firstName;
@@ -62,10 +52,6 @@ public class Account {
 
   public long getVersion() {
     return version;
-  }
-
-  public String getUsername() {
-    return username;
   }
 
   public String getEmail() {

@@ -15,9 +15,9 @@ public class AccountDetailsService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String identifier) {
+  public UserDetails loadUserByUsername(String email) {
     return accounts
-        .findByUsernameOrEmail(identifier)
+        .findByEmailIgnoreCase(email)
         .map(AccountPrincipal::from)
         .orElseThrow(() -> new UsernameNotFoundException("Account not found"));
   }

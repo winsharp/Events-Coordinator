@@ -168,7 +168,6 @@ export function RegisterPage() {
   } = useForm<RegisterValues & { terms: true }>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
       firstName: "",
       lastName: "",
       email: "",
@@ -219,11 +218,6 @@ export function RegisterPage() {
               error={errors.lastName?.message}
             />
           </Group>
-          <TextInput
-            label="Username"
-            {...register("username")}
-            error={errors.username?.message}
-          />
           <TextInput
             label="Email"
             {...register("email")}

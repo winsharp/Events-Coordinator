@@ -18,15 +18,6 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
-    username: z
-      .string()
-      .trim()
-      .min(3, "Use at least 3 characters")
-      .max(50, "Use at most 50 characters")
-      .regex(
-        /^[A-Za-z0-9._-]+$/,
-        "Use letters, numbers, dots, underscores, or hyphens",
-      ),
     firstName: z.string().trim().min(2, "Enter your first name"),
     lastName: z.string().trim().min(2, "Enter your last name"),
     email: z.email("Enter a valid email address"),
