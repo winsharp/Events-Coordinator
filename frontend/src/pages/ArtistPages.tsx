@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Alert,
   Badge,
@@ -6,18 +5,21 @@ import {
   Button,
   Container,
   Group,
-  MultiSelect,
   Paper,
   Select,
   SimpleGrid,
   Stack,
   Text,
+  Textarea,
   TextInput,
   Title,
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Controller, useForm } from "react-hook-form";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import {
   IconCalendarEvent,
   IconMapPin,
@@ -35,9 +37,8 @@ import {
   ProfileAvatar,
 } from "../components/Cards";
 import { useAuth } from "../context/AppContext";
-import { profileSchema, type ProfileValues } from "../lib/schemas";
 import { formatDate } from "../lib/utils";
-import { genreOptions, locationOptions } from "../types";
+import { genreOptions, locationOptions, supportedGenres } from "../types";
 import { venueImage } from "../lib/assets";
 
 const capacityOptions = [
@@ -390,60 +391,82 @@ export function ArtistEventsPage() {
     </Container>
   );
 }
+interface ArtistForm {
+  stageName: string;
+  genre: string;
+  bio: string;
+}
 export function ArtistProfilePage() {
-  const { user, setUser } = useAuth();
-  const form = useForm<ProfileValues>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      displayName: user?.displayName ?? "",
-      email: user?.email ?? "",
-      city: "Toronto",
-      genres: ["Electronic"],
-    },
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const artistQuery = useQuery({
+    queryKey: ["artist", "me"],
+    queryFn: api.myArtist,
   });
+  const [values, setValues] = useState<ArtistForm>({
+    stageName: "",
+    genre: supportedGenres[0] ?? "",
+    bio: "",
+  });
+  useEffect(() => {
+    const artist = artistQuery.data;
+    if (artist)
+      setValues({
+        stageName: artist.name,
+        genre: artist.genre,
+        bio: artist.bio,
+      });
+  }, [artistQuery.data]);
   const mutation = useMutation({
-    mutationFn: (values: ProfileValues) => api.saveProfile("ARTIST", values),
-    onSuccess: (next) => {
-      setUser(next);
+    mutationFn: (next: ArtistForm) => api.saveArtistProfile(next),
+    onSuccess: (artist) => {
+      queryClient.setQueryData(["artist", "me"], artist);
       notifications.show({ color: "teal", message: "Artist profile updated" });
     },
   });
+  if (artistQuery.isLoading) return <FullLoadingState />;
+  const field = <K extends keyof ArtistForm>(key: K, value: ArtistForm[K]) =>
+    setValues((current) => ({ ...current, [key]: value }));
   return (
     <Container fluid className="dashboard-page">
       <Title>Artist profile</Title>
       <Text c="dimmed" mb="xl">
-        Share your sound, city, and booking preferences.
+        Share your stage name, genre, and bio.
       </Text>
       <SimpleGrid cols={{ base: 1, md: 3 }}>
         <Paper p="xl">
-          <ProfileAvatar name={user?.displayName ?? "Artist"} role="Artist" />
+          <ProfileAvatar
+            name={values.stageName || user?.displayName || "Artist"}
+            role="Artist"
+          />
         </Paper>
         <Paper p="xl" style={{ gridColumn: "span 2" }}>
-          <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))}>
-            <Stack>
-              <TextInput
-                label="Artist name"
-                {...form.register("displayName")}
-              />
-              <TextInput label="Management email" {...form.register("email")} />
-              <TextInput label="Home city" {...form.register("city")} />
-              <Controller
-                name="genres"
-                control={form.control}
-                render={({ field }) => (
-                  <MultiSelect
-                    label="Genres"
-                    data={genreOptions.slice(1)}
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                )}
-              />
-              <Button type="submit" loading={mutation.isPending}>
-                Save artist profile
-              </Button>
-            </Stack>
-          </form>
+          <Stack>
+            <TextInput
+              label="Stage name"
+              value={values.stageName}
+              onChange={(e) => field("stageName", e.currentTarget.value)}
+            />
+            <Select
+              label="Genre"
+              data={supportedGenres}
+              value={values.genre}
+              onChange={(value) => field("genre", value ?? values.genre)}
+            />
+            <Textarea
+              label="Bio"
+              minRows={4}
+              placeholder="Tell fans and venues about yourself"
+              value={values.bio}
+              onChange={(e) => field("bio", e.currentTarget.value)}
+            />
+            <Button
+              loading={mutation.isPending}
+              onClick={() => mutation.mutate(values)}
+            >
+              Save artist profile
+            </Button>
+          </Stack>
         </Paper>
       </SimpleGrid>
     </Container>

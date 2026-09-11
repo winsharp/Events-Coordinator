@@ -200,6 +200,14 @@ export const fixtureService = {
     }
     return slot;
   },
+  saveArtistProfile: (values: Record<string, unknown>) => {
+    const artist = fixtureService.myArtist();
+    if (!artist) return undefined;
+    if (typeof values.stageName === "string") artist.name = values.stageName;
+    if (typeof values.genre === "string") artist.genre = values.genre;
+    if (typeof values.bio === "string") artist.bio = values.bio;
+    return artist;
+  },
   saveVenueProfile: (values: Record<string, unknown>) => {
     const venue = fixtureService.myVenue();
     if (!venue) return undefined;

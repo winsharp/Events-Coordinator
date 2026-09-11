@@ -564,6 +564,20 @@ export const api = {
       ),
     );
   },
+  saveArtistProfile: async (values: {
+    stageName: string;
+    genre: string;
+    bio: string;
+  }) => {
+    if (usesStandaloneApi)
+      return unwrap<Artist>(
+        apiClient.patch("/profiles/artist-details", values),
+      );
+    const result = await unwrap<SpringArtist>(
+      apiClient.put("/artists/me", values),
+    );
+    return mapSpringArtistForUi(result);
+  },
   saveVenueProfile: async (values: Record<string, unknown>) => {
     if (usesStandaloneApi)
       return unwrap<Venue>(apiClient.patch("/profiles/venue-details", values));

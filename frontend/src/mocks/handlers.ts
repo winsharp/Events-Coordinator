@@ -113,6 +113,12 @@ export const handlers = [
     return order ? ok(order) : notFound("Payment");
   }),
   http.get("*/dashboard", () => ok(fixtureService.dashboard())),
+  http.patch("*/profiles/artist-details", async ({ request }) => {
+    const artist = fixtureService.saveArtistProfile(
+      (await request.json()) as Record<string, unknown>,
+    );
+    return artist ? ok(artist) : notFound("Artist profile");
+  }),
   http.patch("*/profiles/venue-details", async ({ request }) => {
     const venue = fixtureService.saveVenueProfile(
       (await request.json()) as Record<string, unknown>,
