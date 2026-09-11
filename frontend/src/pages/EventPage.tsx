@@ -26,7 +26,7 @@ import {
   IconSparkles,
 } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { api } from "../api/client";
 import {
   EmptyState,
@@ -255,7 +255,13 @@ export function EventDetailPage() {
               <div className="artist-orb">
                 <IconSparkles size={22} />
               </div>
-              <Text c="violet" fw={800} size="lg">
+              <Text
+                component={Link}
+                to={`/artists/${event.artistId}`}
+                c="violet"
+                fw={800}
+                size="lg"
+              >
                 {event.artist}
               </Text>
             </Group>
@@ -289,7 +295,9 @@ export function EventDetailPage() {
                 <IconMapPin size={30} />
                 <span>Downtown transit and accessibility information</span>
               </div>
-              <Text fw={800}>{event.venue}</Text>
+              <Text component={Link} to={`/venues/${event.venueId}`} fw={800}>
+                {event.venue}
+              </Text>
               <Text size="sm" c="dimmed">
                 Located in the heart of {event.city} with easy access to public
                 transit.

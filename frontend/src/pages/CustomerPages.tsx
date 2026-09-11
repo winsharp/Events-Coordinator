@@ -1,11 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Alert,
   Box,
   Button,
   Container,
   Group,
-  MultiSelect,
   Paper,
   SimpleGrid,
   Stack,
@@ -15,13 +13,13 @@ import {
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Controller, useForm } from "react-hook-form";
 import {
   IconArrowRight,
   IconHistory,
   IconTicket,
   IconUser,
 } from "@tabler/icons-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import {
@@ -32,9 +30,7 @@ import {
   ProfileAvatar,
 } from "../components/Cards";
 import { useAuth } from "../context/AppContext";
-import { profileSchema, type ProfileValues } from "../lib/schemas";
 import { formatDate, formatMoney } from "../lib/utils";
-import { genreOptions } from "../types";
 import concertImage from "../assets/event-banner.png";
 
 export function CustomerHubPage() {
@@ -311,24 +307,20 @@ export function CustomerTicketsPage() {
   );
 }
 
+interface CustomerForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
 export function CustomerProfilePage() {
   const { user, setUser } = useAuth();
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ProfileValues>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      displayName: user?.displayName ?? "",
-      email: user?.email ?? "",
-      city: "Toronto",
-      genres: ["Electronic", "Indie"],
-    },
+  const [values, setValues] = useState<CustomerForm>({
+    firstName: user?.firstName ?? "",
+    lastName: user?.lastName ?? "",
+    email: user?.email ?? "",
   });
   const mutation = useMutation({
-    mutationFn: (values: ProfileValues) => api.saveProfile("CUSTOMER", values),
+    mutationFn: (next: CustomerForm) => api.saveCustomerProfile(next),
     onSuccess: (next) => {
       setUser(next);
       notifications.show({
@@ -337,11 +329,13 @@ export function CustomerProfilePage() {
       });
     },
   });
+  const field = <K extends keyof CustomerForm>(key: K, value: CustomerForm[K]) =>
+    setValues((current) => ({ ...current, [key]: value }));
   return (
     <AccountLayout active="profile">
       <Title>Account profile</Title>
       <Text c="dimmed" mb="xl">
-        Manage your details and discovery preferences.
+        Manage your account details.
       </Text>
       <SimpleGrid cols={{ base: 1, md: 3 }}>
         <Paper p="xl">
@@ -351,41 +345,31 @@ export function CustomerProfilePage() {
           />
         </Paper>
         <Paper p="xl" style={{ gridColumn: "span 2" }}>
-          <form onSubmit={handleSubmit((values) => mutation.mutate(values))}>
-            <Stack>
+          <Stack>
+            <Group grow>
               <TextInput
-                label="Display name"
-                {...register("displayName")}
-                error={errors.displayName?.message}
-              />
-              <TextInput
-                label="Email"
-                {...register("email")}
-                error={errors.email?.message}
+                label="First name"
+                value={values.firstName}
+                onChange={(e) => field("firstName", e.currentTarget.value)}
               />
               <TextInput
-                label="Home city"
-                {...register("city")}
-                error={errors.city?.message}
+                label="Last name"
+                value={values.lastName}
+                onChange={(e) => field("lastName", e.currentTarget.value)}
               />
-              <Controller
-                name="genres"
-                control={control}
-                render={({ field }) => (
-                  <MultiSelect
-                    label="Favourite genres"
-                    data={genreOptions.slice(1)}
-                    value={field.value}
-                    onChange={field.onChange}
-                    error={errors.genres?.message}
-                  />
-                )}
-              />
-              <Button type="submit" loading={mutation.isPending}>
-                Save profile
-              </Button>
-            </Stack>
-          </form>
+            </Group>
+            <TextInput
+              label="Email"
+              value={values.email}
+              onChange={(e) => field("email", e.currentTarget.value)}
+            />
+            <Button
+              loading={mutation.isPending}
+              onClick={() => mutation.mutate(values)}
+            >
+              Save profile
+            </Button>
+          </Stack>
         </Paper>
       </SimpleGrid>
     </AccountLayout>

@@ -52,10 +52,6 @@ export interface Venue {
   address: string;
   capacity: number;
   description: string;
-  genres: string[];
-  amenities: string[];
-  contactEmail?: string;
-  website?: string;
   published?: boolean;
   image?: string;
 }
@@ -413,8 +409,6 @@ export const venues: Venue[] = [
     address: "1 Front St E",
     capacity: 1200,
     description: "A character-rich downtown room with modern production.",
-    genres: ["Electronic", "Pop", "Rock"],
-    amenities: ["Accessible", "Backline", "Green room", "Bar"],
   },
   {
     id: "ven-harbour",
@@ -424,8 +418,6 @@ export const venues: Venue[] = [
     address: "80 Queens Quay",
     capacity: 800,
     description: "Industrial waterfront space made for immersive shows.",
-    genres: ["Electronic", "Indie"],
-    amenities: ["Accessible", "Projection", "Bar"],
   },
   {
     id: "ven-junction",
@@ -435,8 +427,6 @@ export const venues: Venue[] = [
     address: "2854 Dundas St W",
     capacity: 650,
     description: "A beloved independent stage in the west end.",
-    genres: ["Indie", "Rock", "Hip-Hop"],
-    amenities: ["Backline", "Green room", "Merch desk"],
   },
   {
     id: "ven-centre",
@@ -446,8 +436,6 @@ export const venues: Venue[] = [
     address: "1909 Av. des Canadiens",
     capacity: 15000,
     description: "A landmark arena in the centre of Montreal.",
-    genres: ["Pop", "Rock", "Jazz"],
-    amenities: ["Accessible", "Parking", "Suites", "Full production"],
   },
   {
     id: "ven-rogers",
@@ -458,8 +446,6 @@ export const venues: Venue[] = [
     capacity: 42000,
     description:
       "An iconic stadium for unforgettable large-scale performances.",
-    genres: ["Pop", "Rock"],
-    amenities: ["Accessible", "Parking", "Suites", "Full production"],
   },
 ];
 
@@ -1246,7 +1232,6 @@ export const schemaNames = [
   "registerSchema",
   "cardSchema",
   "paypalSchema",
-  "profileSchema",
   "slotSchema",
 ];
 export const formatterNames = [

@@ -5,7 +5,6 @@ import type {
   CheckoutPayload,
   CreateSlotPayload,
   RegisterPayload,
-  Role,
   SearchFilters,
 } from "../types";
 import { mockLatency } from "../types";
@@ -141,10 +140,8 @@ export const handlers = [
     );
     return venue ? ok(venue) : notFound("Venue profile");
   }),
-  http.patch("*/profiles/:role", async ({ params, request }) => {
-    const role = String(params.role).toUpperCase() as Role;
-    const user = fixtureService.saveProfile(
-      role,
+  http.patch("*/profiles/customer-details", async ({ request }) => {
+    const user = fixtureService.saveCustomerProfile(
       (await request.json()) as Record<string, unknown>,
     );
     return user ? ok(user) : notFound("Profile");

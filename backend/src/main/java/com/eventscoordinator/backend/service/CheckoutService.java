@@ -5,6 +5,8 @@ import com.eventscoordinator.backend.mapper.CommerceMapper;
 import com.eventscoordinator.backend.model.*;
 import com.eventscoordinator.backend.repository.*;
 import com.eventscoordinator.backend.security.CurrentAccount;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.*;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CheckoutService {
+  private static final BigDecimal SERVICE_FEE_RATE = new BigDecimal("0.189333");
+
   private final PurchaseOrderRepository orders;
   private final AccountRepository accounts;
   private final ReservationRepository reservations;
@@ -59,6 +63,9 @@ public class CheckoutService {
     OrderStatus status =
         req.paymentMethod() == PaymentMethod.USDC ? OrderStatus.PENDING : OrderStatus.PAID;
     Instant process = status == OrderStatus.PENDING ? Instant.now().plusSeconds(usdcSeconds) : null;
+    BigDecimal subtotal = r.getUnitPrice().multiply(BigDecimal.valueOf(r.getQuantity()));
+    BigDecimal fees = subtotal.multiply(SERVICE_FEE_RATE).setScale(2, RoundingMode.HALF_UP);
+    BigDecimal total = subtotal.add(fees).setScale(2, RoundingMode.HALF_UP);
     PurchaseOrder o =
         orders.save(
             new PurchaseOrder(
@@ -67,7 +74,7 @@ public class CheckoutService {
                 req.idempotencyKey(),
                 req.paymentMethod(),
                 status,
-                r.getUnitPrice().multiply(java.math.BigDecimal.valueOf(r.getQuantity())),
+                total,
                 process));
     r.convert();
     if (status == OrderStatus.PAID) {

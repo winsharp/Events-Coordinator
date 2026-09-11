@@ -4,7 +4,6 @@ import {
   loginSchema,
   orderIdSchema,
   paypalSchema,
-  profileSchema,
   quantitySchema,
   registerSchema,
   slotSchema,
@@ -185,15 +184,6 @@ describe("authentication and checkout schemas", () => {
     expect(
       usdcSchema.safeParse({ billingEmail: "alex@example.com", terms: true })
         .success,
-    ).toBe(true));
-  it("validates profile preferences", () =>
-    expect(
-      profileSchema.safeParse({
-        displayName: "Alex",
-        email: "alex@example.com",
-        city: "Toronto",
-        genres: ["Electronic"],
-      }).success,
     ).toBe(true));
   it("validates different slot times", () =>
     expect(

@@ -188,17 +188,10 @@ describe("Spring REST response adapters", () => {
         city: "Austin",
         capacity: 1200,
         description: "Historic downtown hall",
-        contactEmail: "venue@example.test",
-        website: "https://atlas.example.test",
-        genres: ["Rock", "Electronic"],
-        amenities: ["Accessible", "Green room"],
         published: false,
       }),
     ).toMatchObject({
       id: "9",
-      genres: ["Rock", "Electronic"],
-      amenities: ["Accessible", "Green room"],
-      contactEmail: "venue@example.test",
       published: false,
     });
   });

@@ -25,7 +25,6 @@ import {
 import {
   IconCalendarEvent,
   IconMapPin,
-  IconMusic,
   IconPlus,
   IconSearch,
   IconSparkles,
@@ -42,7 +41,7 @@ import {
 import { useAuth } from "../context/AppContext";
 import { formatDate } from "../lib/utils";
 import type { Event } from "../types";
-import { genreOptions, locationOptions, supportedGenres } from "../types";
+import { locationOptions, supportedGenres } from "../types";
 import { venueImage } from "../lib/assets";
 
 const capacityOptions = [
@@ -56,7 +55,6 @@ export function ArtistBookingPage() {
   const queryClient = useQueryClient();
   const [location, setLocation] = useState("All locations");
   const [capacity, setCapacity] = useState("Any capacity");
-  const [genre, setGenre] = useState("All genres");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
   const [selectedVenue, setSelectedVenue] = useState("");
@@ -79,7 +77,6 @@ export function ArtistBookingPage() {
         const lm =
           location === "All locations" ||
           `${venue.city}, ${venue.region}` === location;
-        const gm = genre === "All genres" || venue.genres.includes(genre);
         const cm =
           capacity === "Any capacity" ||
           (capacity === "Under 2,000"
@@ -94,17 +91,9 @@ export function ArtistBookingPage() {
             (!dateFrom || slot.date >= dateFrom) &&
             (!dateTo || slot.date <= dateTo),
         );
-        return lm && gm && cm && hs;
+        return lm && cm && hs;
       }),
-    [
-      venuesQuery.data,
-      slotsQuery.data,
-      location,
-      capacity,
-      genre,
-      dateFrom,
-      dateTo,
-    ],
+    [venuesQuery.data, slotsQuery.data, location, capacity, dateFrom, dateTo],
   );
   useEffect(() => {
     if (!visibleVenues.some((venue) => venue.id === selectedVenue)) {
@@ -180,12 +169,6 @@ export function ArtistBookingPage() {
             value={dateTo}
             onChange={(e) => setDateTo(e.currentTarget.value)}
           />
-          <Select
-            label="Genre fit"
-            data={genreOptions}
-            value={genre}
-            onChange={(v) => setGenre(v ?? "All genres")}
-          />
           <Button leftSection={<IconSearch size={17} />}>
             Search availability
           </Button>
@@ -233,12 +216,6 @@ export function ArtistBookingPage() {
                           <IconUsers size={16} />
                           <Text size="sm">
                             {venue.capacity.toLocaleString()}
-                          </Text>
-                        </Group>
-                        <Group gap={5}>
-                          <IconMusic size={16} />
-                          <Text size="sm">
-                            {venue.genres.slice(0, 2).join(", ")}
                           </Text>
                         </Group>
                       </Group>

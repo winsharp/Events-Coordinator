@@ -110,10 +110,6 @@ export interface SpringVenue {
   city: string;
   capacity: number;
   description: string;
-  contactEmail?: string;
-  website?: string;
-  genres?: string[];
-  amenities?: string[];
   published?: boolean;
 }
 
@@ -225,12 +221,6 @@ export const mapSpringVenueForUi = (venue: SpringVenue): Venue => ({
   address: venue.address,
   capacity: venue.capacity,
   description: venue.description,
-  genres: venue.genres?.length ? venue.genres : ["Live"],
-  amenities: venue.amenities?.length
-    ? venue.amenities
-    : ["Accessible venue information"],
-  contactEmail: venue.contactEmail,
-  website: venue.website,
   published: venue.published ?? true,
 });
 
@@ -451,42 +441,17 @@ export const api = {
   venues: async (filters: SearchFilters = {}) => {
     if (usesStandaloneApi)
       return unwrap<Venue[]>(apiClient.get(`/venues?${queryString(filters)}`));
-    const [data, events, artists] = await Promise.all([
-      unwrap<SpringVenue[]>(apiClient.get("/venues")),
-      unwrap<SpringEvent[]>(apiClient.get("/events")),
-      unwrap<SpringArtist[]>(apiClient.get("/artists")),
-    ]);
-    const genresByArtist = new Map(
-      artists.map((artist) => [asId(artist.id), artist.genre]),
-    );
-    return data
-      .map((source) => {
-        const venue = mapSpringVenueForUi(source);
-        const genres = Array.from(
-          new Set(
-            events
-              .filter((event) => asId(event.venueId) === venue.id)
-              .map((event) => genresByArtist.get(asId(event.artistId)))
-              .filter(Boolean) as string[],
-          ),
-        );
-        return { ...venue, genres: genres.length ? genres : venue.genres };
-      })
-      .filter((venue) => {
-        const query = normalizeQuery(filters.query);
-        const location = normalizeQuery(filters.location).split(",")[0];
-        return (
-          `${venue.name} ${venue.city} ${venue.genres.join(" ")}`
-            .toLowerCase()
-            .includes(query) &&
-          (!location ||
-            filters.location === "All locations" ||
-            normalizeQuery(venue.city).includes(location)) &&
-          (!filters.genre ||
-            filters.genre === "All genres" ||
-            venue.genres.includes(filters.genre))
-        );
-      });
+    const data = await unwrap<SpringVenue[]>(apiClient.get("/venues"));
+    return data.map(mapSpringVenueForUi).filter((venue) => {
+      const query = normalizeQuery(filters.query);
+      const location = normalizeQuery(filters.location).split(",")[0];
+      return (
+        `${venue.name} ${venue.city}`.toLowerCase().includes(query) &&
+        (!location ||
+          filters.location === "All locations" ||
+          normalizeQuery(venue.city).includes(location))
+      );
+    });
   },
   venue: async (id: string) =>
     usesStandaloneApi
@@ -601,23 +566,11 @@ export const api = {
         city: String(values.city ?? ""),
         capacity: Number(values.capacity ?? 1),
         description: String(values.description ?? ""),
-        contactEmail: String(values.email ?? ""),
-        website: String(values.website ?? ""),
-        genres: Array.isArray(values.genres) ? values.genres : [],
-        amenities: Array.isArray(values.amenities) ? values.amenities : [],
         published: Boolean(values.published),
       }),
     );
     return {
       ...mapSpringVenueForUi(result),
-      genres: Array.isArray(values.genres)
-        ? (values.genres as string[])
-        : ["Live"],
-      amenities: Array.isArray(values.amenities)
-        ? (values.amenities as string[])
-        : [],
-      contactEmail: result.contactEmail ?? String(values.email ?? ""),
-      website: result.website ?? String(values.website ?? ""),
       published: result.published ?? Boolean(values.published),
     };
   },
@@ -738,45 +691,16 @@ export const api = {
     usesStandaloneApi
       ? unwrap<DashboardStats>(apiClient.get("/dashboard"))
       : Promise.resolve(dashboardStats),
-  saveProfile: async (role: Role, values: Record<string, unknown>) => {
+  saveCustomerProfile: async (values: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  }) => {
     if (usesStandaloneApi)
-      return unwrap<User>(
-        apiClient.patch(`/profiles/${role.toLowerCase()}`, values),
-      );
-    const displayName = String(values.displayName ?? "").trim();
-    const email = String(values.email ?? "").trim();
-    if (role === "CUSTOMER") {
-      const [firstName, ...rest] = displayName.split(/\s+/);
-      return accountToUser(
-        await unwrap<SpringAccount>(
-          apiClient.put("/auth/me", {
-            email,
-            firstName: firstName || "Customer",
-            lastName: rest.join(" ") || "User",
-          }),
-        ),
-      );
-    }
-    if (role === "ARTIST") {
-      await apiClient.put("/artists/me", {
-        stageName: displayName,
-        genre: Array.isArray(values.genres) ? values.genres[0] : "Live",
-        bio: `Based in ${String(values.city ?? "")}`,
-      });
-    } else {
-      const currentVenue = await unwrap<SpringVenue>(
-        apiClient.get("/venues/me"),
-      );
-      await apiClient.put("/venues/me", {
-        name: displayName,
-        address: String(values.address ?? currentVenue.address),
-        city: String(values.city ?? currentVenue.city),
-        capacity: Number(values.capacity ?? currentVenue.capacity),
-        description: String(values.description ?? currentVenue.description),
-      });
-    }
-    const account = await unwrap<SpringAccount>(apiClient.get("/auth/me"));
-    return { ...accountToUser(account), displayName };
+      return unwrap<User>(apiClient.patch("/profiles/customer-details", values));
+    return accountToUser(
+      await unwrap<SpringAccount>(apiClient.put("/auth/me", values)),
+    );
   },
 };
 

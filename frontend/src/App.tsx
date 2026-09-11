@@ -1,7 +1,7 @@
 import { Button, Container, Stack, Text, Title } from "@mantine/core";
 import { Link, Route, Routes } from "react-router-dom";
 import { DashboardLayout, PublicLayout } from "./components/Shell";
-import { RequireAuth, RequireRole } from "./components/RouteGuards";
+import { RequireRole } from "./components/RouteGuards";
 import {
   ArtistBookingPage,
   ArtistEventsPage,
@@ -106,17 +106,17 @@ export default function App() {
       <Route
         path="checkout"
         element={
-          <RequireAuth>
+          <RequireRole role="CUSTOMER">
             <CheckoutPage />
-          </RequireAuth>
+          </RequireRole>
         }
       />
       <Route
         path="checkout/success/:id"
         element={
-          <RequireAuth>
+          <RequireRole role="CUSTOMER">
             <CheckoutSuccessPage />
-          </RequireAuth>
+          </RequireRole>
         }
       />
     </Routes>

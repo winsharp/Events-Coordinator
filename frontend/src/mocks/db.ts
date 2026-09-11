@@ -39,15 +39,10 @@ export const fixtureService = {
       const query = (filters.query ?? "").toLowerCase();
       const location = `${venue.city}, ${venue.region}`;
       return (
-        `${venue.name} ${venue.city} ${venue.genres.join(" ")}`
-          .toLowerCase()
-          .includes(query) &&
+        `${venue.name} ${venue.city}`.toLowerCase().includes(query) &&
         (!filters.location ||
           filters.location === "All locations" ||
-          filters.location === location) &&
-        (!filters.genre ||
-          filters.genre === "All genres" ||
-          venue.genres.includes(filters.genre))
+          filters.location === location)
       );
     }),
   venue: (id: string) => database.venues.find((venue) => venue.id === id),
@@ -239,11 +234,6 @@ export const fixtureService = {
     if (typeof values.capacity === "number") venue.capacity = values.capacity;
     if (typeof values.description === "string")
       venue.description = values.description;
-    if (Array.isArray(values.genres)) venue.genres = values.genres as string[];
-    if (Array.isArray(values.amenities))
-      venue.amenities = values.amenities as string[];
-    if (typeof values.email === "string") venue.contactEmail = values.email;
-    if (typeof values.website === "string") venue.website = values.website;
     if (typeof values.published === "boolean")
       venue.published = values.published;
     return venue;
@@ -269,12 +259,13 @@ export const fixtureService = {
     return order;
   },
   dashboard: () => dashboardStats,
-  saveProfile: (role: Role, values: Record<string, unknown>) => {
-    const user = database.users.find((candidate) => candidate.role === role);
+  saveCustomerProfile: (values: Record<string, unknown>) => {
+    const user = database.users.find((candidate) => candidate.role === "CUSTOMER");
     if (!user) return undefined;
-    if (typeof values.displayName === "string")
-      user.displayName = values.displayName;
+    if (typeof values.firstName === "string") user.firstName = values.firstName;
+    if (typeof values.lastName === "string") user.lastName = values.lastName;
     if (typeof values.email === "string") user.email = values.email;
+    user.displayName = `${user.firstName} ${user.lastName}`.trim();
     return user;
   },
 };

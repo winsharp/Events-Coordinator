@@ -185,7 +185,7 @@ class ApiWorkflowIntegrationTest {
         node(call(
                 "POST",
                 "/api/events/" + eventId + "/tiers",
-                venue,
+                artist,
                 "{\"name\":\"Reserved\",\"price\":\"42.50\",\"quantity\":20}",
                 201))
             .get("id")

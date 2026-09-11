@@ -65,13 +65,6 @@ export const usdcSchema = z.object({
   terms: z.literal(true, { error: "Accept the purchase terms" }),
 });
 
-export const profileSchema = z.object({
-  displayName: z.string().trim().min(2, "Enter a display name"),
-  email: z.email("Enter a valid email"),
-  city: z.string().trim().min(2, "Enter a city"),
-  genres: z.array(z.string()).min(1, "Choose at least one genre"),
-});
-
 export const slotSchema = z
   .object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Choose a date"),
@@ -100,5 +93,4 @@ export type RegisterValues = z.infer<typeof registerSchema>;
 export type CardValues = z.infer<typeof cardSchema>;
 export type PaypalValues = z.infer<typeof paypalSchema>;
 export type UsdcValues = z.infer<typeof usdcSchema>;
-export type ProfileValues = z.infer<typeof profileSchema>;
 export type SlotValues = z.infer<typeof slotSchema>;

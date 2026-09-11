@@ -22,7 +22,6 @@ import {
   IconCalendarEvent,
   IconClock,
   IconMapPin,
-  IconMusic,
   IconRefresh,
   IconTicket,
   IconUsers,
@@ -134,10 +133,6 @@ export function VenueCard({ venue }: { venue: Venue }) {
         <Group gap={5}>
           <IconUsers size={17} />
           <Text size="sm">{venue.capacity.toLocaleString()}</Text>
-        </Group>
-        <Group gap={5}>
-          <IconMusic size={17} />
-          <Text size="sm">{venue.genres.slice(0, 2).join(", ")}</Text>
         </Group>
       </Group>
       <Text size="sm" c="dimmed" mt="sm" lineClamp={2}>

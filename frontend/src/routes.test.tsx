@@ -128,8 +128,8 @@ describe("application route smoke coverage", () => {
 
   it("updates the Customer profile through MSW", async () => {
     renderApp(<App />, { route: "/customer/profile", role: "CUSTOMER" });
-    const displayName = await screen.findByLabelText("Display name");
-    fireEvent.change(displayName, { target: { value: "Alex Rivera Updated" } });
+    const lastName = await screen.findByLabelText("Last name");
+    fireEvent.change(lastName, { target: { value: "Rivera Updated" } });
     await userEvent.click(screen.getByRole("button", { name: "Save profile" }));
     expect(
       await screen.findByText("Customer profile updated"),

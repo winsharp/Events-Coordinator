@@ -7,7 +7,6 @@ import {
   Container,
   Group,
   Modal,
-  MultiSelect,
   NumberInput,
   Paper,
   Select,
@@ -42,11 +41,9 @@ import {
   MetricCard,
   ProfileAvatar,
 } from "../components/Cards";
-import { useAuth } from "../context/AppContext";
 import { formatDate, formatMoney } from "../lib/utils";
 import {
   dashboardPeriods,
-  genreOptions,
   weekdays,
   type AvailabilitySlot,
 } from "../types";
@@ -542,27 +539,13 @@ export function VenueBookingsPage() {
 
 type VenueForm = {
   displayName: string;
-  email: string;
   address: string;
   city: string;
   capacity: number | string;
-  website: string;
   description: string;
-  genres: string[];
-  amenities: string[];
   published: boolean;
 };
-const amenityOptions = [
-  "Accessible",
-  "Backline",
-  "Green room",
-  "Bar",
-  "Parking",
-  "Merch desk",
-  "Full production",
-];
 export function VenueProfilePage() {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const venueQuery = useQuery({
     queryKey: ["venue", "me"],
@@ -570,14 +553,10 @@ export function VenueProfilePage() {
   });
   const [values, setValues] = useState<VenueForm>({
     displayName: "",
-    email: user?.email ?? "",
     address: "",
     city: "",
     capacity: 1000,
-    website: "",
     description: "",
-    genres: [],
-    amenities: [],
     published: false,
   });
   useEffect(() => {
@@ -585,17 +564,13 @@ export function VenueProfilePage() {
     if (venue)
       setValues({
         displayName: venue.name,
-        email: venue.contactEmail ?? user?.email ?? "",
         address: venue.address,
         city: venue.city,
         capacity: venue.capacity,
-        website: venue.website ?? "",
         description: venue.description,
-        genres: venue.genres,
-        amenities: venue.amenities,
         published: venue.published ?? false,
       });
-  }, [venueQuery.data, user?.email]);
+  }, [venueQuery.data]);
   const mutation = useMutation({
     mutationFn: (next: VenueForm) =>
       api.saveVenueProfile({ ...next, capacity: Number(next.capacity) }),
@@ -647,11 +622,6 @@ export function VenueProfilePage() {
               onChange={(e) => field("displayName", e.currentTarget.value)}
             />
             <TextInput
-              label="Team email"
-              value={values.email}
-              onChange={(e) => field("email", e.currentTarget.value)}
-            />
-            <TextInput
               label="Street address"
               value={values.address}
               onChange={(e) => field("address", e.currentTarget.value)}
@@ -669,29 +639,11 @@ export function VenueProfilePage() {
                 onChange={(value) => field("capacity", value)}
               />
             </Group>
-            <TextInput
-              label="Website"
-              placeholder="https://"
-              value={values.website}
-              onChange={(e) => field("website", e.currentTarget.value)}
-            />
             <Textarea
-              label="Public description"
+              label="Bio"
               minRows={4}
               value={values.description}
               onChange={(e) => field("description", e.currentTarget.value)}
-            />
-            <MultiSelect
-              label="Genres hosted"
-              data={genreOptions.slice(1)}
-              value={values.genres}
-              onChange={(value) => field("genres", value)}
-            />
-            <MultiSelect
-              label="Amenities"
-              data={amenityOptions}
-              value={values.amenities}
-              onChange={(value) => field("amenities", value)}
             />
             <Checkbox
               label="I confirm this information is ready for public display"

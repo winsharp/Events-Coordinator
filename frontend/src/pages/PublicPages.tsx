@@ -76,12 +76,14 @@ function SearchPanel({
           value={params.get("location") ?? "All locations"}
           onChange={(value) => update("location", value)}
         />
-        <Select
-          label="Genre"
-          data={genreOptions}
-          value={params.get("genre") ?? "All genres"}
-          onChange={(value) => update("genre", value)}
-        />
+        {mode !== "venues" && (
+          <Select
+            label="Genre"
+            data={genreOptions}
+            value={params.get("genre") ?? "All genres"}
+            onChange={(value) => update("genre", value)}
+          />
+        )}
         <Button onClick={() => setParams({})} variant="light">
           Clear filters
         </Button>
@@ -328,7 +330,6 @@ export function VenuesPage() {
   const [params] = useSearchParams();
   const filters = {
     query: params.get("query") ?? "",
-    genre: params.get("genre") ?? "All genres",
     location: params.get("location") ?? "All locations",
   };
   const query = useQuery({
@@ -489,8 +490,8 @@ export function PublicVenueDetailPage() {
           </Paper>
           <Paper p="lg" radius="lg" className="detail-info">
             <IconCalendarEvent />
-            <Title order={3}>Amenities</Title>
-            <Text>{venue.amenities.join(" · ")}</Text>
+            <Title order={3}>Upcoming shows</Title>
+            <Text>{shows.length} announced</Text>
           </Paper>
         </SimpleGrid>
         <Title order={2} mt={50} mb="lg">
